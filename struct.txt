@@ -1,0 +1,35 @@
+/schedule
+├── main.go                  # 程序入口
+├── go.mod                   # Go模块文件
+├── go.sum                   # Go模块依赖文件
+├── /config
+│   └── config.go            # 配置文件加载
+├── /models
+│   ├── teacher.go           # 教师模型
+│   ├── classroom.go         # 教室模型
+│   ├── course.go            # 课程模型
+│   ├── class.go             # 班级模型
+│   └── schedule.go          # 排课结果模型
+├── /database
+│   └── db.go                # 数据库连接与初始化
+├── /handlers
+│   ├── teacher_handler.go   # 教师相关API
+│   ├── classroom_handler.go # 教室相关API
+│   ├── course_handler.go    # 课程相关API
+│   ├── class_handler.go     # 班级相关API
+│   ├── schedule_handler.go  # 排课相关API
+│   └── stat_handler.go      # 统计相关API
+├── /services
+│   ├── teacher_service.go   # 教师业务逻辑
+│   ├── classroom_service.go # 教室业务逻辑
+│   ├── course_service.go    # 课程业务逻辑
+│   ├── class_service.go     # 班级业务逻辑
+│   ├── schedule_service.go  # 排课业务逻辑
+│   └── stat_service.go      # 统计业务逻辑
+├── /utils
+│   ├── response.go          # 统一响应格式
+│   └── validator.go         # 请求参数校验
+├── /algorithm
+│   └── genetic_algorithm.go # 遗传算法实现
+└── /middleware
+    └── auth.go              # 认证中间件
