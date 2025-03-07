@@ -2,20 +2,28 @@ package models
 
 import (
 	"gorm.io/gorm"
+	"log"
 	"schedule/database"
 	"sync"
 )
 
 // Course 定义了课程表的结构
 type Course struct {
-	gorm.Model         // 内嵌 gorm.Model
-	ID         string  `gorm:"primaryKey;type:varchar(20)"`   // 课程编号
-	Name       string  `gorm:"type:varchar(100);not null"`    // 课程名称
-	Type       string  `gorm:"type:varchar(20)"`              // 课程类型（理论、实践、实验）
-	Credit     float64 `gorm:"type:float"`                    // 学分
-	Department string  `gorm:"type:varchar(50)"`              // 开课院系
-	TotalHours int     `gorm:"type:int"`                      // 总学时
-	Status     string  `gorm:"type:varchar(20);default:'启用'"` // 状态
+	gorm.Model            // 内嵌 gorm.Model
+	ID            string  `gorm:"primaryKey;type:varchar(20)"` // 课程编号
+	Name          string  `gorm:"type:varchar(100);not null"`  // 课程名称
+	Type          string  `gorm:"type:varchar(20)"`            // 课程类型（理论、实践、实验）
+	Property      string  `gorm:"type:varchar(100)"`           // 课程属性
+	Credit        float64 `gorm:"type:float"`                  // 学分
+	Department    string  `gorm:"type:varchar(50)"`            // 开课院系
+	TotalHours    int     `gorm:"type:int"`                    // 总学时
+	TheoryHours   int     `gorm:"type:int"`                    //理论学时
+	TestHours     int     `gorm:"type:int"`                    //实验学时
+	ComputerHours int     `gorm:"type:int"`                    //上机学时
+	PracticeHours int     `gorm:"type:int"`                    //实践学时
+	OtherHours    int     `gorm:"type:int"`                    //其他学时
+	WeeklyHours   int     `gorm:"type:int"`                    //周学时
+	PurePractice  bool    `gorm:"type:boolean"`                //是否纯实践
 }
 
 type CourseDao struct{}
@@ -36,6 +44,7 @@ func NewCourseDao() *CourseDao {
 func (CourseDao) GetAllCourses() ([]Course, error) {
 	var courses []Course
 	if err := database.DB.Find(&courses).Error; err != nil {
+		log.Println("Failed to get all courses, err:", err)
 		return nil, err
 	}
 	return courses, nil
@@ -45,6 +54,15 @@ func (CourseDao) GetAllCourses() ([]Course, error) {
 func (CourseDao) GetCourseByID(id string) (*Course, error) {
 	var course Course
 	if err := database.DB.Where("id = ?", id).First(&course).Error; err != nil {
+		log.Println("Failed to get course by ID:", id, ", err:", err)
+		return nil, err
+	}
+	return &course, nil
+}
+
+func (CourseDao) GetCourseByName(name string) (*Course, error) {
+	var course Course
+	if err := database.DB.Where("name = ?", name).First(&course).Error; err != nil {
 		return nil, err
 	}
 	return &course, nil
@@ -53,23 +71,29 @@ func (CourseDao) GetCourseByID(id string) (*Course, error) {
 // CreateCourse 创建课程
 func (CourseDao) CreateCourse(course *Course) error {
 	if err := database.DB.Create(course).Error; err != nil {
+		log.Println("Database create course failed, err:", err)
 		return err
 	}
+	log.Println("Course created successfully, ID:", course.ID)
 	return nil
 }
 
 // UpdateCourse 更新课程信息
 func (CourseDao) UpdateCourse(id string, course *Course) error {
 	if err := database.DB.Model(&Course{}).Where("id = ?", id).Updates(course).Error; err != nil {
+		log.Println("Failed to update course with ID:", id, ", err:", err)
 		return err
 	}
+	log.Println("Course updated successfully, ID:", id)
 	return nil
 }
 
 // DeleteCourse 删除课程
 func (CourseDao) DeleteCourse(id string) error {
 	if err := database.DB.Where("id = ?", id).Delete(&Course{}).Error; err != nil {
+		log.Println("Failed to delete course with ID:", id, ", err:", err)
 		return err
 	}
+	log.Println("Course deleted successfully, ID:", id)
 	return nil
 }

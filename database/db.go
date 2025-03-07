@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
-	"schedule/config"
+	"schedule/commen/config"
 )
 
 // DB 是全局的数据库连接实例

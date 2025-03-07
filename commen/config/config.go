@@ -11,7 +11,7 @@ import (
 var (
 	ConfOnce   sync.Once
 	instance   *Config
-	configPath = "config/config.yaml"
+	configPath = "commen/config/config.yaml"
 )
 
 // Config 代表应用程序的配置结构体

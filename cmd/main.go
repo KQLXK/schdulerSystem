@@ -3,6 +3,7 @@ package main
 import (
 	"schedule/database"
 	"schedule/models"
+	"schedule/route"
 )
 
 func main() {
@@ -13,6 +14,10 @@ func main() {
 	database.InitDB()
 	//渲染数据表
 	models.InitTables()
+
+	r := route.SetupRoute()
+
+	r.Run(":8080")
 
 	// 创建 Gin 引擎
 	//r := gin.Default()
