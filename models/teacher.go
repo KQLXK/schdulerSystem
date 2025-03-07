@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"schedule/database"
+)
 
 // Teacher 定义了教师表的结构
 type Teacher struct {
@@ -11,4 +14,46 @@ type Teacher struct {
 	Department string `gorm:"type:varchar(50)"`              // 所属院系
 	IsExternal bool   `gorm:"default:false"`                 // 是否外聘
 	Status     string `gorm:"type:varchar(20);default:'启用'"` // 状态
+}
+
+// GetAllTeachers 获取所有教师
+func GetAllTeachers() ([]Teacher, error) {
+	var teachers []Teacher
+	if err := database.DB.Find(&teachers).Error; err != nil {
+		return nil, err
+	}
+	return teachers, nil
+}
+
+// GetTeacherByID 根据ID获取教师
+func GetTeacherByID(id string) (*Teacher, error) {
+	var teacher Teacher
+	if err := database.DB.Where("id = ?", id).First(&teacher).Error; err != nil {
+		return nil, err
+	}
+	return &teacher, nil
+}
+
+// CreateTeacher 创建教师
+func CreateTeacher(teacher *Teacher) error {
+	if err := database.DB.Create(teacher).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateTeacher 更新教师信息
+func UpdateTeacher(id string, teacher *Teacher) error {
+	if err := database.DB.Model(&Teacher{}).Where("id = ?", id).Updates(teacher).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteTeacher 删除教师
+func DeleteTeacher(id string) error {
+	if err := database.DB.Where("id = ?", id).Delete(&Teacher{}).Error; err != nil {
+		return err
+	}
+	return nil
 }

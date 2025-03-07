@@ -27,7 +27,7 @@ type Config struct {
 // DatabaseConfig 代表数据库配置
 type DatabaseConfig struct {
 	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
+	Port     string `yaml:"port"`
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	Name     string `yaml:"name"`
