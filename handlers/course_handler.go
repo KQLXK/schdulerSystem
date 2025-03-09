@@ -52,27 +52,70 @@ func AddCourse(c *gin.Context) {
 	return
 }
 
-//// UpdateCourse 更新课程信息
-//func UpdateCourse(c *gin.Context) {
-//	id := c.Param("id")
-//	var course models.Course
-//	if err := c.ShouldBindJSON(&course); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//	if err := services.UpdateCourse(id, &course); err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-//		return
-//	}
-//	c.JSON(http.StatusOK, course)
-//}
-//
-//// DeleteCourse 删除课程
-//func DeleteCourse(c *gin.Context) {
-//	id := c.Param("id")
-//	if err := services.DeleteCourse(id); err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-//		return
-//	}
-//	c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
-//}
+func UpdateCourse(c *gin.Context) {
+	var req dto.CourseUpdateReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		result.Errors(c, err)
+		return
+	}
+	if err := course.NewCourseUpdateFlow(req).Do(); err != nil {
+		if err == course.DataNotFoundErr {
+			result.Error(c, result.CourseNotFoundStatus)
+			return
+		}
+		if err == course.InvalidDataErr {
+			result.Error(c, result.CourseDataInvalidStatus)
+			return
+		}
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, nil) // 更新成功，返回空数据
+}
+
+// DeleteCourse 处理删除课程的请求
+func DeleteCourse(c *gin.Context) {
+	courseID := c.Param("course_id") // 假设课程 ID 是通过 URL 参数传递的
+	if courseID == "" {
+		result.Error(c, result.CourseIDEmptyStatus)
+		return
+	}
+	if err := course.NewCourseDeleteFlow(courseID).Do(); err != nil {
+		if err == course.DataNotFoundErr {
+			result.Error(c, result.CourseNotFoundStatus)
+			return
+		}
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, nil) // 删除成功，返回空数据
+}
+
+// GetCourse 处理获取单个课程的请求
+func GetCourse(c *gin.Context) {
+	courseID := c.Param("course_id")
+	if courseID == "" {
+		result.Error(c, result.CourseIDEmptyStatus)
+		return
+	}
+	data, err := course.NewCourseGetFlow(courseID).Do()
+	if err != nil {
+		if err == course.DataNotFoundErr {
+			result.Error(c, result.CourseNotFoundStatus)
+			return
+		}
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, data)
+}
+
+// GetAllCourses 处理获取所有课程的请求
+func GetAllCourses(c *gin.Context) {
+	courses, err := course.NewCourseGetAllFlow().Do()
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, courses)
+}

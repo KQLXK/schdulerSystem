@@ -63,6 +63,7 @@ func (f *CourseCreateFlow) CreateCourse() error {
 
 func (f *CourseCreateFlow) reqToCourse() *models.Course {
 	return &models.Course{
+		ID:            f.CourseID,
 		Name:          f.CourseName,
 		Type:          f.CourseType,
 		Property:      f.CourseProperty,

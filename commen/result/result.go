@@ -9,6 +9,10 @@ var (
 	//400
 	CourseExsitsStatus      = NewStatus(http.StatusBadRequest, 40001, "课程名或课程号已存在")
 	CourseDataInvalidStatus = NewStatus(http.StatusBadRequest, 40002, "学时数据不合法")
+	CourseIDEmptyStatus     = NewStatus(http.StatusBadRequest, 40003, "课程ID不能为空")
+
+	//404
+	CourseNotFoundStatus = NewStatus(http.StatusNotFound, 40401, "课程未找到")
 )
 
 type status struct {
@@ -47,7 +51,7 @@ func Sucess(c *gin.Context, data interface{}) {
 }
 
 func Error(c *gin.Context, s status) {
-	c.JSON(s.Statuscode, gin.H{
+	c.JSON(s.httpcode(), gin.H{
 		"status":  s.statuscode(),
 		"message": s.Message,
 	})
