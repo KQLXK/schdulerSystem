@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"schedule/utils"
+	"schedule/commen/utils"
 	"strings"
 )
 
