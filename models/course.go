@@ -16,13 +16,13 @@ type Course struct {
 	Property      string  `gorm:"type:varchar(100)"`           // 课程属性
 	Credit        float64 `gorm:"type:float"`                  // 学分
 	Department    string  `gorm:"type:varchar(50)"`            // 开课院系
-	TotalHours    int     `gorm:"type:int"`                    // 总学时
-	TheoryHours   int     `gorm:"type:int"`                    //理论学时
-	TestHours     int     `gorm:"type:int"`                    //实验学时
-	ComputerHours int     `gorm:"type:int"`                    //上机学时
-	PracticeHours int     `gorm:"type:int"`                    //实践学时
-	OtherHours    int     `gorm:"type:int"`                    //其他学时
-	WeeklyHours   int     `gorm:"type:int"`                    //周学时
+	TotalHours    int64   `gorm:"type:int"`                    // 总学时
+	TheoryHours   int64   `gorm:"type:int"`                    //理论学时
+	TestHours     int64   `gorm:"type:int"`                    //实验学时
+	ComputerHours int64   `gorm:"type:int"`                    //上机学时
+	PracticeHours int64   `gorm:"type:int"`                    //实践学时
+	OtherHours    int64   `gorm:"type:int"`                    //其他学时
+	WeeklyHours   int64   `gorm:"type:int"`                    //周学时
 	PurePractice  bool    `gorm:"type:boolean"`                //是否纯实践
 }
 

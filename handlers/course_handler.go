@@ -2,31 +2,11 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"schedule/commen/result"
 	"schedule/dto"
 	"schedule/services/course"
 )
-
-//// GetCourses 获取所有课程
-//func GetCourses(c *gin.Context) {
-//	courses, err := services.GetAllCourses()
-//	if err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-//		return
-//	}
-//	c.JSON(http.StatusOK, courses)
-//}
-//
-//// GetCourseByID 根据ID获取课程
-//func GetCourseByID(c *gin.Context) {
-//	id := c.Param("id")
-//	course, err := services.GetCourseByID(id)
-//	if err != nil {
-//		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
-//		return
-//	}
-//	c.JSON(http.StatusOK, course)
-//}
 
 // AddCourse 添加课程
 func AddCourse(c *gin.Context) {
@@ -35,6 +15,7 @@ func AddCourse(c *gin.Context) {
 		result.Errors(c, err)
 		return
 	}
+	log.Println("get req sucess, req:", req)
 	resp, err := course.NewCourseCreateFlow(req).Do()
 	if err != nil {
 		if err == course.DataExistErr {
@@ -58,6 +39,7 @@ func UpdateCourse(c *gin.Context) {
 		result.Errors(c, err)
 		return
 	}
+	log.Println("get req sucess, req:", req)
 	if err := course.NewCourseUpdateFlow(req).Do(); err != nil {
 		if err == course.DataNotFoundErr {
 			result.Error(c, result.CourseNotFoundStatus)
