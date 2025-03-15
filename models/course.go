@@ -47,6 +47,7 @@ func (CourseDao) GetAllCourses() ([]Course, error) {
 		log.Println("Failed to get all courses, err:", err)
 		return nil, err
 	}
+	log.Println("get all courses sucess")
 	return courses, nil
 }
 
@@ -57,6 +58,7 @@ func (CourseDao) GetCourseByID(id string) (*Course, error) {
 		log.Println("Failed to get course by ID:", id, ", err:", err)
 		return nil, err
 	}
+	log.Println("get course by id sucess")
 	return &course, nil
 }
 
@@ -96,4 +98,25 @@ func (CourseDao) DeleteCourse(id string) error {
 	}
 	log.Println("Course deleted successfully, ID:", id)
 	return nil
+}
+
+func (CourseDao) QueryByPage(page int, pagesize int) ([]Course, error) {
+	var courses []Course
+	offset := page * (pagesize - 1)
+	if err := database.DB.Model(&Course{}).Order("created_at DESC").Limit(pagesize).Offset(offset).Find(&courses).Error; err != nil {
+		log.Println("query course by page failed, err:", err)
+		return nil, err
+	}
+	log.Println("query course by page sucess")
+	return courses, nil
+}
+
+func (CourseDao) CountTotal() (int, error) {
+	var total int64
+	if err := database.DB.Model(&Course{}).Order("created_at DESC").Count(&total).Error; err != nil {
+		log.Println("count total course failed, err:", err)
+		return -1, err
+	}
+	log.Println("count total courses sucess")
+	return int(total), nil
 }

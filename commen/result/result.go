@@ -10,9 +10,20 @@ var (
 	CourseExsitsStatus      = NewStatus(http.StatusBadRequest, 40001, "课程名或课程号已存在")
 	CourseDataInvalidStatus = NewStatus(http.StatusBadRequest, 40002, "学时数据不合法")
 	CourseIDEmptyStatus     = NewStatus(http.StatusBadRequest, 40003, "课程ID不能为空")
+	FileNotReceiveStatus    = NewStatus(http.StatusBadRequest, 40004, "接收课程文件失败")
+	FileFormatErrStatus     = NewStatus(http.StatusBadRequest, 40005, "文件格式错误")
+	PageDataErrStatus       = NewStatus(http.StatusBadRequest, 40006, "页码超出范围")
+
+	//401
+	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")
+	TokenRequiredStatus  = NewStatus(http.StatusUnauthorized, 40102, "请先登录")
+	TokenFormatErrStatus = NewStatus(http.StatusUnauthorized, 40103, "token格式有误")
 
 	//404
 	CourseNotFoundStatus = NewStatus(http.StatusNotFound, 40401, "课程未找到")
+
+	//500
+	ServerInteralErrStatus = NewStatus(http.StatusInternalServerError, 50000, "服务器内部错误")
 )
 
 type status struct {

@@ -60,16 +60,31 @@ type CourseGetResp struct {
 	CourseProperty   string  `json:"course_property"`   // 课程属性
 	CourseCredit     float64 `json:"course_credit"`     // 学分
 	CourseDepartment string  `json:"course_department"` // 开课院系
-	TotalHour        int     `json:"total_hour"`        // 总学时
-	TheoryHours      int     `json:"theory_hours"`      // 理论学时
-	TestHours        int     `json:"test_hours"`        // 实验学时
-	ComputerHours    int     `json:"computer_hours"`    // 上机学时
-	PracticeHours    int     `json:"practice_hours"`    // 实践学时
-	OtherHours       int     `json:"other_hours"`       // 其他学时
-	WeeklyHours      int     `json:"weekly_hours"`      // 周学时
+	TotalHour        int64   `json:"total_hour"`        // 总学时
+	TheoryHours      int64   `json:"theory_hours"`      // 理论学时
+	TestHours        int64   `json:"test_hours"`        // 实验学时
+	ComputerHours    int64   `json:"computer_hours"`    // 上机学时
+	PracticeHours    int64   `json:"practice_hours"`    // 实践学时
+	OtherHours       int64   `json:"other_hours"`       // 其他学时
+	WeeklyHours      int64   `json:"weekly_hours"`      // 周学时
 	PurePractice     bool    `json:"pure_practice"`     // 是否纯实践
 }
 
-type CourseGetAllResp struct {
+type CourseQueryAllResp struct {
+	Total   int64           `json:"total"`   //课程数量
 	Courses []CourseGetResp `json:"courses"` // 课程列表
+}
+
+type CourseAddByExcelResp struct {
+	AddSuccess int                 `json:"add_success"`
+	AddFail    int                 `json:"add_fail"`
+	FailList   []*CourseCreateResp `json:"fail_list"`
+}
+
+type CourseQueryByPageResp struct {
+	Total      int64           `json:"total"`      // 总记录数
+	TotalPages int64           `json:"totalPages"` // 总页数
+	Page       int             `json:"page"`       // 当前页码
+	PageSize   int             `json:"pageSize"`   // 每页数量
+	Courses    []CourseGetResp `json:"courses"`    // 课程列表
 }
