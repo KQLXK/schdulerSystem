@@ -18,12 +18,16 @@ func UpdateTeacher(id string, req dto.TeacherUpdateReq) (*models.Teacher, error)
 	}
 
 	teacher := models.Teacher{
-		ID:         req.ID,
-		Name:       req.Name,
-		Gender:     req.Gender,
-		Department: req.Department,
-		IsExternal: req.IsExternal,
-		Status:     req.Status,
+		ID:          req.ID,
+		Name:        req.Name,
+		EnglishName: req.EnglishName,
+		Gender:      req.Gender,
+		Ethnicity:   req.Ethnicity,
+		Department:  req.Department,
+		Title:       req.Title,
+		Category:    req.Category,
+		IsExternal:  req.IsExternal,
+		Status:      req.Status,
 	}
 
 	if err := models.UpdateTeacher(id, &teacher); err != nil {

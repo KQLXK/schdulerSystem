@@ -17,13 +17,17 @@ func CreateClassroom(req dto.ClassroomCreateReq) (*models.Classroom, error) {
 	}
 
 	classroom := models.Classroom{
-		ID:       req.ID,
-		Name:     req.Name,
-		Campus:   req.Campus,
-		Building: req.Building,
-		Capacity: req.Capacity,
-		Type:     req.Type,
-		Status:   req.Status,
+		ID:          req.ID,
+		Name:        req.Name,
+		Campus:      req.Campus,
+		Building:    req.Building,
+		Floor:       req.Floor,
+		Capacity:    req.Capacity,
+		Type:        req.Type,
+		HasAC:       req.HasAC,
+		Description: req.Description,
+		Department:  req.Department,
+		Status:      req.Status,
 	}
 
 	if err := models.NewClassroomDao().CreateClassroom(&classroom); err != nil {
