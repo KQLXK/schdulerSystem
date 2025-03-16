@@ -7,12 +7,18 @@ import (
 
 var (
 	//400
-	CourseExsitsStatus      = NewStatus(http.StatusBadRequest, 40001, "课程名或课程号已存在")
-	CourseDataInvalidStatus = NewStatus(http.StatusBadRequest, 40002, "学时数据不合法")
-	CourseIDEmptyStatus     = NewStatus(http.StatusBadRequest, 40003, "课程ID不能为空")
-	FileNotReceiveStatus    = NewStatus(http.StatusBadRequest, 40004, "接收课程文件失败")
-	FileFormatErrStatus     = NewStatus(http.StatusBadRequest, 40005, "文件格式错误")
-	PageDataErrStatus       = NewStatus(http.StatusBadRequest, 40006, "页码超出范围")
+	CourseExsitsStatus         = NewStatus(http.StatusBadRequest, 40001, "课程名或课程号已存在")
+	CourseDataInvalidStatus    = NewStatus(http.StatusBadRequest, 40002, "学时数据不合法")
+	CourseIDEmptyStatus        = NewStatus(http.StatusBadRequest, 40003, "课程ID不能为空")
+	TeacherExistsStatus        = NewStatus(http.StatusBadRequest, 40004, "教师工号或姓名已存在")
+	TeacherDataInvalidStatus   = NewStatus(http.StatusBadRequest, 40005, "教师数据不合法")
+	TeacherIDEmptyStatus       = NewStatus(http.StatusBadRequest, 40006, "教师ID不能为空")
+	ClassroomExistsStatus      = NewStatus(http.StatusBadRequest, 40007, "教室编号或名称已存在")
+	ClassroomDataInvalidStatus = NewStatus(http.StatusBadRequest, 40008, "教室数据不合法")
+	ClassroomIDEmptyStatus     = NewStatus(http.StatusBadRequest, 40009, "教室ID不能为空")
+	FileNotReceiveStatus       = NewStatus(http.StatusBadRequest, 40004, "接收课程文件失败")
+	FileFormatErrStatus        = NewStatus(http.StatusBadRequest, 40005, "文件格式错误")
+	PageDataErrStatus          = NewStatus(http.StatusBadRequest, 40006, "页码超出范围")
 
 	//401
 	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")
@@ -20,9 +26,10 @@ var (
 	TokenFormatErrStatus = NewStatus(http.StatusUnauthorized, 40103, "token格式有误")
 
 	//404
-	CourseNotFoundStatus = NewStatus(http.StatusNotFound, 40401, "课程未找到")
+	CourseNotFoundStatus    = NewStatus(http.StatusNotFound, 40401, "课程未找到")
+	TeacherNotFoundStatus   = NewStatus(http.StatusNotFound, 40402, "教师未找到")
+	ClassroomNotFoundStatus = NewStatus(http.StatusNotFound, 40403, "教室未找到")
 
-	//500
 	ServerInteralErrStatus = NewStatus(http.StatusInternalServerError, 50000, "服务器内部错误")
 )
 

@@ -2,7 +2,7 @@ database:
   host: localhost
   port: 3306
   user: root
-  password: yuchao123
+  password: admin
   name: scheduler
 
 redis:
