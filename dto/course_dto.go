@@ -34,6 +34,7 @@ type CourseCreateReq struct {
 type CourseCreateResp struct {
 	CourseID   string `json:"course_id"`
 	CourseName string `json:"course_name"`
+	Err        string `json:"err"`
 }
 
 type CourseUpdateReq struct {

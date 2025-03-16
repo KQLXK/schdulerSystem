@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 	"schedule/commen/result"
 	"schedule/dto"
 	"schedule/services/course"
@@ -41,7 +42,8 @@ func AddCourseByExcel(c *gin.Context) {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
-	if err = c.SaveUploadedFile(file, "./tmp/"+file.Filename); err != nil {
+	tempFilePath := "./tmp/" + file.Filename
+	if err = c.SaveUploadedFile(file, tempFilePath); err != nil {
 		log.Println("save uploaded file failed, err:", err)
 		result.Error(c, result.ServerInteralErrStatus)
 		return
@@ -51,6 +53,7 @@ func AddCourseByExcel(c *gin.Context) {
 		result.Error(c, result.FileFormatErrStatus)
 		return
 	}
+	defer os.Remove(tempFilePath)
 	result.Sucess(c, resp)
 }
 

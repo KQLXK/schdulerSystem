@@ -76,7 +76,7 @@ func (CourseDao) CreateCourse(course *Course) error {
 		log.Println("Database create course failed, err:", err)
 		return err
 	}
-	log.Println("Course created successfully, ID:", course.ID)
+	log.Println("Course created successfully, ID:", course.ID, "Name:", course.Name)
 	return nil
 }
 
@@ -102,7 +102,7 @@ func (CourseDao) DeleteCourse(id string) error {
 
 func (CourseDao) QueryByPage(page int, pagesize int) ([]Course, error) {
 	var courses []Course
-	offset := page * (pagesize - 1)
+	offset := (page - 1) * pagesize
 	if err := database.DB.Model(&Course{}).Order("created_at DESC").Limit(pagesize).Offset(offset).Find(&courses).Error; err != nil {
 		log.Println("query course by page failed, err:", err)
 		return nil, err
