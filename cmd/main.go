@@ -33,4 +33,6 @@ func main() {
 	//if err := r.Run(":8080"); err != nil {
 	//	panic("Failed to start server: " + err.Error())
 	//}
+
+	//utils.Test()
 }

@@ -2,31 +2,13 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
+	"os"
 	"schedule/commen/result"
 	"schedule/dto"
 	"schedule/services/course"
+	"strconv"
 )
-
-//// GetCourses 获取所有课程
-//func GetCourses(c *gin.Context) {
-//	courses, err := services.GetAllCourses()
-//	if err != nil {
-//		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-//		return
-//	}
-//	c.JSON(http.StatusOK, courses)
-//}
-//
-//// GetCourseByID 根据ID获取课程
-//func GetCourseByID(c *gin.Context) {
-//	id := c.Param("id")
-//	course, err := services.GetCourseByID(id)
-//	if err != nil {
-//		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
-//		return
-//	}
-//	c.JSON(http.StatusOK, course)
-//}
 
 // AddCourse 添加课程
 func AddCourse(c *gin.Context) {
@@ -35,6 +17,7 @@ func AddCourse(c *gin.Context) {
 		result.Errors(c, err)
 		return
 	}
+	log.Println("get req sucess, req:", req)
 	resp, err := course.NewCourseCreateFlow(req).Do()
 	if err != nil {
 		if err == course.DataExistErr {
@@ -52,12 +35,35 @@ func AddCourse(c *gin.Context) {
 	return
 }
 
+// 使用excel导入课表
+func AddCourseByExcel(c *gin.Context) {
+	file, err := c.FormFile("course_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+	tempFilePath := "./tmp/" + file.Filename
+	if err = c.SaveUploadedFile(file, tempFilePath); err != nil {
+		log.Println("save uploaded file failed, err:", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
+	}
+	resp, err := course.CourseAddByExcel(file.Filename)
+	if err != nil {
+		result.Error(c, result.FileFormatErrStatus)
+		return
+	}
+	defer os.Remove(tempFilePath)
+	result.Sucess(c, resp)
+}
+
 func UpdateCourse(c *gin.Context) {
 	var req dto.CourseUpdateReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		result.Errors(c, err)
 		return
 	}
+	log.Println("get req sucess, req:", req)
 	if err := course.NewCourseUpdateFlow(req).Do(); err != nil {
 		if err == course.DataNotFoundErr {
 			result.Error(c, result.CourseNotFoundStatus)
@@ -112,10 +118,29 @@ func GetCourse(c *gin.Context) {
 
 // GetAllCourses 处理获取所有课程的请求
 func GetAllCourses(c *gin.Context) {
-	courses, err := course.NewCourseGetAllFlow().Do()
+	resp, err := course.CourseQueryAll()
 	if err != nil {
+		result.Errors(c, err)
+	}
+	result.Sucess(c, resp)
+}
+
+func QueryCourseByPage(c *gin.Context) {
+	// 获取查询参数并转换为 int64
+	pageStr := c.Query("page")
+	Page, _ := strconv.ParseInt(pageStr, 10, 64)
+
+	pageSizeStr := c.Query("pagesize")
+	PageSize, _ := strconv.ParseInt(pageSizeStr, 10, 64)
+	log.Println("page:", Page, "pagesize:", PageSize)
+	resp, err := course.CourseQueryByPage(int(Page), int(PageSize))
+	if err != nil {
+		if err == course.PageNumErr {
+			result.Error(c, result.PageDataErrStatus)
+			return
+		}
 		result.Errors(c, err)
 		return
 	}
-	result.Sucess(c, courses)
+	result.Sucess(c, resp)
 }
