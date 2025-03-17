@@ -46,21 +46,21 @@ func (f *CourseUpdateFlow) UpdateCourse() error {
 	return models.NewCourseDao().UpdateCourse(f.CourseID, course)
 }
 
-func (f *CourseUpdateFlow) reqToCourse() *models.Course {
-	return &models.Course{
-		ID:            f.CourseID,
-		Name:          f.CourseName,
-		Type:          f.CourseType,
-		Property:      f.CourseProperty,
-		Credit:        f.CourseCredit,
-		Department:    f.CourseDepartment,
-		TotalHours:    f.TotalHour,
-		TheoryHours:   f.TheoryHours,
-		TestHours:     f.TestHours,
-		ComputerHours: f.ComputerHours,
-		PracticeHours: f.PracticeHours,
-		OtherHours:    f.OtherHours,
-		WeeklyHours:   f.WeeklyHours,
-		PurePractice:  f.PurePractice,
+func (f *CourseUpdateFlow) reqToCourse() *map[string]interface{} {
+	return &map[string]interface{}{
+		"ID":            f.CourseID,
+		"Name":          f.CourseName,
+		"Type":          f.CourseType,
+		"Property":      f.CourseProperty,
+		"Credit":        f.CourseCredit,
+		"Department":    f.CourseDepartment,
+		"TotalHours":    f.TotalHour,
+		"TheoryHours":   f.TheoryHours,
+		"TestHours":     f.TestHours,
+		"ComputerHours": f.ComputerHours,
+		"PracticeHours": f.PracticeHours,
+		"OtherHours":    f.OtherHours,
+		"WeeklyHours":   f.WeeklyHours,
+		"PurePractice":  f.PurePractice,
 	}
 }
