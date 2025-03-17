@@ -2,6 +2,7 @@ package course
 
 import (
 	"errors"
+	"log"
 	"schedule/dto"
 	"schedule/models"
 )
@@ -49,6 +50,7 @@ func (f *CourseCreateFlow) CheckExists() error {
 
 func (f *CourseCreateFlow) CheckTotalHours() error {
 	if f.TotalHour != (f.TheoryHours + f.TestHours + f.ComputerHours + f.PracticeHours + f.OtherHours) {
+		log.Printf("TotalHour check failed: expected %d TheoryHours: %d, TestHours: %d, ComputerHours: %d, PracticeHours: %d, OtherHours: %d", f.TotalHour, f.TheoryHours, f.TestHours, f.ComputerHours, f.PracticeHours, f.OtherHours)
 		return InvalidDataErr
 	}
 	return nil
