@@ -44,7 +44,7 @@ type CourseUpdateReq struct {
 	CourseProperty   string  `json:"course_property"`                 // 课程属性
 	CourseCredit     float64 `json:"course_credit"`                   // 学分
 	CourseDepartment string  `json:"course_department"`               // 开课院系
-	TotalHour        int64   `json:"total_hour" validate:"required"`  // 总学时
+	TotalHour        int64   `json:"total_hours" validate:"required"` // 总学时
 	TheoryHours      int64   `json:"theory_hours"`                    // 理论学时
 	TestHours        int64   `json:"test_hours"`                      // 实验学时
 	ComputerHours    int64   `json:"computer_hours"`                  // 上机学时
@@ -61,7 +61,7 @@ type CourseGetResp struct {
 	CourseProperty   string  `json:"course_property"`   // 课程属性
 	CourseCredit     float64 `json:"course_credit"`     // 学分
 	CourseDepartment string  `json:"course_department"` // 开课院系
-	TotalHour        int64   `json:"total_hour"`        // 总学时
+	TotalHour        int64   `json:"total_hours"`       // 总学时
 	TheoryHours      int64   `json:"theory_hours"`      // 理论学时
 	TestHours        int64   `json:"test_hours"`        // 实验学时
 	ComputerHours    int64   `json:"computer_hours"`    // 上机学时
