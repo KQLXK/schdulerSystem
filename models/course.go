@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"log"
 	"schedule/database"
@@ -74,6 +75,9 @@ func (CourseDao) GetCourseByName(name string) (*Course, error) {
 func (CourseDao) CreateCourse(course *Course) error {
 	if err := database.DB.Create(course).Error; err != nil {
 		log.Println("Database create course failed, err:", err)
+		if err == gorm.ErrDuplicatedKey {
+			return fmt.Errorf("课程ID'%s'已存在", course.ID)
+		}
 		return err
 	}
 	log.Println("Course created successfully, ID:", course.ID, "Name:", course.Name)
@@ -81,7 +85,7 @@ func (CourseDao) CreateCourse(course *Course) error {
 }
 
 // UpdateCourse 更新课程信息
-func (CourseDao) UpdateCourse(id string, course *Course) error {
+func (CourseDao) UpdateCourse(id string, course *map[string]interface{}) error {
 	if err := database.DB.Model(&Course{}).Where("id = ?", id).Updates(course).Error; err != nil {
 		log.Println("Failed to update course with ID:", id, ", err:", err)
 		return err
