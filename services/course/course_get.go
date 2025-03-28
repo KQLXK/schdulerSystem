@@ -20,14 +20,3 @@ func (f *CourseGetFlow) Do() (*models.Course, error) {
 	}
 	return course, nil
 }
-
-// CourseGetAllFlow 表示获取所有课程的工作流
-type CourseGetAllFlow struct{}
-
-func NewCourseGetAllFlow() *CourseGetAllFlow {
-	return &CourseGetAllFlow{}
-}
-
-func (f *CourseGetAllFlow) Do() ([]models.Course, error) {
-	return models.NewCourseDao().GetAllCourses()
-}

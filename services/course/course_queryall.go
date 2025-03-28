@@ -26,7 +26,7 @@ func (f *CourseQueryAllFlow) Do() (*dto.CourseQueryAllResp, error) {
 	if err := f.CountTotal(); err != nil {
 		return nil, err
 	}
-	resp.Courses = f.Convert()
+	resp.Courses = Convert(f.courses)
 	resp.Total = int64(f.total)
 	return &resp, nil
 }
@@ -49,9 +49,9 @@ func (f *CourseQueryAllFlow) Queryall() error {
 	return nil
 }
 
-func (f *CourseQueryAllFlow) Convert() []dto.CourseGetResp {
-	courseResp := make([]dto.CourseGetResp, len(f.courses))
-	for i, course := range f.courses {
+func Convert(courses []models.Course) []dto.CourseGetResp {
+	courseResp := make([]dto.CourseGetResp, len(courses))
+	for i, course := range courses {
 		courseResp[i] = dto.CourseGetResp{
 			CourseID:         course.ID,
 			CourseName:       course.Name,

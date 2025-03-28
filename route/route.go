@@ -28,6 +28,7 @@ func SetupRoute() *gin.Engine {
 		courseGroup.GET("/query/:course_id", handlers.GetCourse)
 		courseGroup.GET("/queryall", handlers.GetAllCourses)
 		courseGroup.GET("/querybypage", handlers.QueryCourseByPage)
+		courseGroup.GET("/search", handlers.SearchCourse)
 	}
 	teacherGroup := r.Group("/teacher")
 	{

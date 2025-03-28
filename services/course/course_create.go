@@ -10,6 +10,7 @@ import (
 var (
 	InvalidDataErr = errors.New("学时数据不合法")
 	DataExistErr   = errors.New("课程ID或课程名已存在")
+	DataNullErr    = errors.New("课程ID或课程名为空")
 )
 
 type CourseCreateFlow struct {
@@ -23,6 +24,9 @@ func NewCourseCreateFlow(req dto.CourseCreateReq) *CourseCreateFlow {
 }
 
 func (f *CourseCreateFlow) Do() (*dto.CourseCreateResp, error) {
+	if err := f.CheckData(); err != nil {
+		return nil, err
+	}
 	if err := f.CheckExists(); err != nil {
 		return nil, err
 	}
@@ -36,6 +40,13 @@ func (f *CourseCreateFlow) Do() (*dto.CourseCreateResp, error) {
 		CourseID:   f.CourseID,
 		CourseName: f.CourseName,
 	}, nil
+}
+
+func (f *CourseCreateFlow) CheckData() error {
+	if f.CourseID == "" || f.CourseName == "" {
+		return DataNullErr
+	}
+	return nil
 }
 
 func (f *CourseCreateFlow) CheckExists() error {

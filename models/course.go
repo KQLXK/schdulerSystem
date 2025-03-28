@@ -11,20 +11,20 @@ import (
 // Course 定义了课程表的结构
 type Course struct {
 	gorm.Model            // 内嵌 gorm.Model
-	ID            string  `gorm:"primaryKey;type:varchar(20)"` // 课程编号
-	Name          string  `gorm:"type:varchar(100);not null"`  // 课程名称
-	Type          string  `gorm:"type:varchar(20)"`            // 课程类型（理论、实践、实验）
-	Property      string  `gorm:"type:varchar(100)"`           // 课程属性
-	Credit        float64 `gorm:"type:float"`                  // 学分
-	Department    string  `gorm:"type:varchar(50)"`            // 开课院系
-	TotalHours    int64   `gorm:"type:int"`                    // 总学时
-	TheoryHours   int64   `gorm:"type:int"`                    //理论学时
-	TestHours     int64   `gorm:"type:int"`                    //实验学时
-	ComputerHours int64   `gorm:"type:int"`                    //上机学时
-	PracticeHours int64   `gorm:"type:int"`                    //实践学时
-	OtherHours    int64   `gorm:"type:int"`                    //其他学时
-	WeeklyHours   int64   `gorm:"type:int"`                    //周学时
-	PurePractice  bool    `gorm:"type:boolean"`                //是否纯实践
+	ID            string  `gorm:"primaryKey;type:varchar(20);not null"` // 课程编号
+	Name          string  `gorm:"type:varchar(100);not null"`           // 课程名称
+	Type          string  `gorm:"type:varchar(20)"`                     // 课程类型（理论、实践、实验）
+	Property      string  `gorm:"type:varchar(100)"`                    // 课程属性
+	Credit        float64 `gorm:"type:float"`                           // 学分
+	Department    string  `gorm:"type:varchar(50)"`                     // 开课院系
+	TotalHours    int64   `gorm:"type:int"`                             // 总学时
+	TheoryHours   int64   `gorm:"type:int"`                             //理论学时
+	TestHours     int64   `gorm:"type:int"`                             //实验学时
+	ComputerHours int64   `gorm:"type:int"`                             //上机学时
+	PracticeHours int64   `gorm:"type:int"`                             //实践学时
+	OtherHours    int64   `gorm:"type:int"`                             //其他学时
+	WeeklyHours   int64   `gorm:"type:int"`                             //周学时
+	PurePractice  bool    `gorm:"type:boolean"`                         //是否纯实践
 }
 
 type CourseDao struct{}
@@ -123,4 +123,17 @@ func (CourseDao) CountTotal() (int, error) {
 	}
 	log.Println("count total courses sucess")
 	return int(total), nil
+}
+
+func (CourseDao) SearchCourse(s string) ([]Course, error) {
+	var courses []Course
+
+	// 使用 LIKE 语句进行模糊搜索
+	if err := database.DB.Model(&Course{}).Where("name LIKE ?", "%"+s+"%").Find(&courses).Error; err != nil {
+		log.Println("search course failed, err:", err)
+		return nil, err
+	}
+
+	log.Println("search courses success, found:", len(courses))
+	return courses, nil
 }

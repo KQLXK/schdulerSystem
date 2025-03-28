@@ -28,6 +28,10 @@ func AddCourse(c *gin.Context) {
 			result.Error(c, result.CourseDataInvalidStatus)
 			return
 		}
+		if err == course.DataNullErr {
+			result.Error(c, result.CourseDataEmptyStatus)
+			return
+		}
 		result.Errors(c, err)
 		return
 	}
@@ -139,6 +143,16 @@ func QueryCourseByPage(c *gin.Context) {
 			result.Error(c, result.PageDataErrStatus)
 			return
 		}
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, resp)
+}
+
+func SearchCourse(c *gin.Context) {
+	searchStr := c.PostForm("search_str")
+	resp, err := course.CourseSearch(searchStr)
+	if err != nil {
 		result.Errors(c, err)
 		return
 	}

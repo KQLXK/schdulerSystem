@@ -85,19 +85,15 @@ func (f *CourseAddByExcelFlow) Do() (*dto.CourseAddByExcelResp, error) {
 }
 
 func (f *CourseAddByExcelFlow) ReadFile() ([][]string, error) {
-	data := strings.Split(f.Filename, ".")
-	log.Println("filename:", f.Filename, data[1], data[1] == "xls")
-	if len(data) < 2 {
-		return nil, FileFormatErr
+	res, err := utils.ReadExcel(f.Filename)
+	if err != nil {
+		if err == utils.ExcelFormatErr {
+			return nil, FileFormatErr
+		} else {
+			return nil, err
+		}
 	}
-	switch data[1] {
-	case "xlsx":
-		return utils.ReadXlsx(f.Filename)
-	case "xls":
-		return utils.ReadXls(f.Filename)
-	default:
-		return nil, FileFormatErr
-	}
+	return res, nil
 }
 
 func (f *CourseAddByExcelFlow) AddCourse(fieldMap map[string]int, dataRows [][]string) *dto.CourseAddByExcelResp {
@@ -146,6 +142,9 @@ func parseCourse(row []string, fieldMap map[string]int) (*models.Course, error) 
 	// 解析各字段，处理可能的转换错误
 	course.ID = getValueSafely(row, fieldMap["ID"])
 	course.Name = getValueSafely(row, fieldMap["Name"])
+	if course.ID == "" || course.Name == "" {
+		return nil, fmt.Errorf("课程名或课程ID不能为空")
+	}
 	course.Type = getValueSafely(row, fieldMap["Type"])
 	course.Property = getValueSafely(row, fieldMap["Property"])
 

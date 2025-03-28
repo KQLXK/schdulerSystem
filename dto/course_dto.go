@@ -89,3 +89,8 @@ type CourseQueryByPageResp struct {
 	PageSize   int             `json:"pageSize"`   // 每页数量
 	Courses    []CourseGetResp `json:"courses"`    // 课程列表
 }
+
+type CourseSearchResp struct {
+	TotalCount int64           `json:"total_count"`
+	Courses    []CourseGetResp `json:"courses"`
+}
