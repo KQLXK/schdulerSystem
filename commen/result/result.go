@@ -17,7 +17,7 @@ var (
 	ClassroomExistsStatus      = NewStatus(http.StatusBadRequest, 40007, "教室编号或名称已存在")
 	ClassroomDataInvalidStatus = NewStatus(http.StatusBadRequest, 40008, "教室数据不合法")
 	ClassroomIDEmptyStatus     = NewStatus(http.StatusBadRequest, 40009, "教室ID不能为空")
-	FileNotReceiveStatus       = NewStatus(http.StatusBadRequest, 40010, "接收课程文件失败")
+	FileNotReceiveStatus       = NewStatus(http.StatusBadRequest, 40010, "接收文件失败")
 	FileFormatErrStatus        = NewStatus(http.StatusBadRequest, 40011, "文件格式错误")
 	PageDataErrStatus          = NewStatus(http.StatusBadRequest, 40012, "页码超出范围")
 

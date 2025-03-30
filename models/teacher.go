@@ -61,3 +61,30 @@ func DeleteTeacher(id string) error {
 	}
 	return nil
 }
+
+func QueryTeachersByPage(page int, pagesize int) ([]Teacher, error) {
+	var teachers []Teacher
+	offset := (page - 1) * pagesize
+	if err := database.DB.Model(&Teacher{}).Order("created_at DESC").Limit(pagesize).Offset(offset).Find(&teachers).Error; err != nil {
+		return nil, err
+	}
+	return teachers, nil
+}
+
+func CountTeachers() (int64, error) {
+	var total int64
+	if err := database.DB.Model(&Teacher{}).Count(&total).Error; err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func SearchTeachers(s string) ([]Teacher, error) {
+	var teachers []Teacher
+	if err := database.DB.Model(&Teacher{}).
+		Where("name LIKE ? OR id LIKE ?", "%"+s+"%", "%"+s+"%").
+		Find(&teachers).Error; err != nil {
+		return nil, err
+	}
+	return teachers, nil
+}

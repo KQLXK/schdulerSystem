@@ -78,3 +78,31 @@ func (ClassroomDao) DeleteClassroom(id string) error {
 	}
 	return nil
 }
+
+func (ClassroomDao) QueryByPage(page int, pagesize int) ([]Classroom, error) {
+	var classrooms []Classroom
+	offset := (page - 1) * pagesize
+	if err := database.DB.Model(&Classroom{}).Order("created_at DESC").Limit(pagesize).Offset(offset).Find(&classrooms).Error; err != nil {
+		return nil, err
+	}
+	return classrooms, nil
+}
+
+func (ClassroomDao) CountTotal() (int64, error) {
+	var total int64
+	if err := database.DB.Model(&Classroom{}).Count(&total).Error; err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (ClassroomDao) SearchClassroom(s string) ([]Classroom, error) {
+	var classrooms []Classroom
+	if err := database.DB.Model(&Classroom{}).
+		Where("name LIKE ? OR id LIKE ? OR building LIKE ?",
+			"%"+s+"%", "%"+s+"%", "%"+s+"%").
+		Find(&classrooms).Error; err != nil {
+		return nil, err
+	}
+	return classrooms, nil
+}

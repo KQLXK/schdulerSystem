@@ -37,6 +37,9 @@ func SetupRoute() *gin.Engine {
 		teacherGroup.PUT("/update/:id", handlers.UpdateTeacher)
 		teacherGroup.GET("/query/:id", handlers.GetTeacherByID)
 		teacherGroup.GET("/queryall", handlers.GetTeachers)
+		teacherGroup.GET("/querybypage", handlers.QueryTeacherByPage)
+		teacherGroup.GET("/search", handlers.SearchTeacher)
+		teacherGroup.POST("/create/file", handlers.AddTeacherByExcel)
 	}
 	classroomGroup := r.Group("/classroom")
 	{
@@ -45,6 +48,9 @@ func SetupRoute() *gin.Engine {
 		classroomGroup.PUT("/update/:id", handlers.UpdateClassroom)
 		classroomGroup.GET("/query/:id", handlers.GetClassroomByID)
 		classroomGroup.GET("/queryall", handlers.GetClassrooms)
+		classroomGroup.GET("/querybypage", handlers.QueryClassroomByPage)
+		classroomGroup.GET("/search", handlers.SearchClassroom)
+		classroomGroup.POST("/create/file", handlers.AddClassroomByExcel)
 	}
 	return r
 
