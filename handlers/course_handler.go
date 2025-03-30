@@ -150,7 +150,7 @@ func QueryCourseByPage(c *gin.Context) {
 }
 
 func SearchCourse(c *gin.Context) {
-	searchStr := c.PostForm("search_str")
+	searchStr := c.Query("search_str")
 	resp, err := course.CourseSearch(searchStr)
 	if err != nil {
 		result.Errors(c, err)
