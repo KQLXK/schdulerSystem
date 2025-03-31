@@ -107,7 +107,11 @@ func QueryClassroomByPage(c *gin.Context) {
 }
 
 func SearchClassroom(c *gin.Context) {
-	searchStr := c.PostForm("search_str")
+	searchStr := c.Query("search_str")
+	if searchStr == "" {
+		result.Error(c, result.ClassroomDataInvalidStatus)
+		return
+	}
 	resp, err := classroom.ClassroomSearch(searchStr)
 	if err != nil {
 		result.Errors(c, err)
