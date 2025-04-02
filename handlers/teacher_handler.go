@@ -108,10 +108,6 @@ func QueryTeacherByPage(c *gin.Context) {
 
 func SearchTeacher(c *gin.Context) {
 	searchStr := c.Query("search_str")
-	if searchStr == "" {
-		result.Error(c, result.TeacherDataInvalidStatus)
-		return
-	}
 	resp, err := teacher.TeacherSearch(searchStr)
 	if err != nil {
 		result.Errors(c, err)
