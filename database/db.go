@@ -1,6 +1,9 @@
 package database
 
 import (
+	"context"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -8,7 +11,11 @@ import (
 )
 
 // DB 是全局的数据库连接实例
-var DB *gorm.DB
+var (
+	Rdb *redis.Client
+	DB  *gorm.DB
+	Ctx = context.Background()
+)
 
 // InitDB 初始化数据库连接
 func InitDB() {
@@ -43,4 +50,18 @@ func InitDB() {
 
 	// 打印成功连接信息
 	log.Println("Successfully connected to database!")
+}
+
+func InitRedis() {
+	Rdb = redis.NewClient(&redis.Options{
+		Addr:     config.GetConfig().Redis.Addr,
+		Password: "",
+		DB:       0,
+		PoolSize: 20,
+	})
+	_, err := Rdb.Ping(Ctx).Result()
+	if err != nil {
+		log.Fatalf("could not connect to redis: %v", err)
+	}
+	fmt.Println("connect redis success")
 }

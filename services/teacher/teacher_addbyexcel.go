@@ -53,8 +53,9 @@ func (f *TeacherAddByExcelFlow) Do() (*dto.TeacherAddByExcelResp, error) {
 	if len(f.TeacherList) < 1 {
 		return nil, errors.New("文件内容为空")
 	}
-	headers := f.TeacherList[0]
-	dataRows := f.TeacherList[1:]
+	headers := f.TeacherList[1]
+	log.Println("headers:", headers)
+	dataRows := f.TeacherList[2:]
 
 	columnMap := make(map[string]int)
 	for i, header := range headers {

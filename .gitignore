@@ -3,3 +3,4 @@
 *.yaml
 *.xml
 commen/config/*
+tmp/*

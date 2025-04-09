@@ -32,8 +32,8 @@ func NewCourseQueryByPageFlow(page int, pagesize int) *CourseQueryByPageFlow {
 
 func (f *CourseQueryByPageFlow) Do() (*dto.CourseQueryByPageResp, error) {
 	var resp dto.CourseQueryByPageResp
-	resp.Page = f.Page
-	resp.PageSize = f.Pagesize
+	resp.Page = int64(f.Page)
+	resp.PageSize = int64(f.Pagesize)
 	if err := f.QueryByPage(); err != nil {
 		return nil, err
 	}

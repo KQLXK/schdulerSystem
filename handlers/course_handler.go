@@ -90,7 +90,7 @@ func DeleteCourse(c *gin.Context) {
 		result.Error(c, result.CourseIDEmptyStatus)
 		return
 	}
-	if err := course.NewCourseDeleteFlow(courseID).Do(); err != nil {
+	if err := course.DeleteCourse(courseID); err != nil {
 		if err == course.DataNotFoundErr {
 			result.Error(c, result.CourseNotFoundStatus)
 			return
@@ -108,7 +108,7 @@ func GetCourse(c *gin.Context) {
 		result.Error(c, result.CourseIDEmptyStatus)
 		return
 	}
-	data, err := course.NewCourseGetFlow(courseID).Do()
+	data, err := course.GetCourse(courseID)
 	if err != nil {
 		if err == course.DataNotFoundErr {
 			result.Error(c, result.CourseNotFoundStatus)

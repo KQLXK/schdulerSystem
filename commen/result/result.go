@@ -20,6 +20,12 @@ var (
 	FileNotReceiveStatus       = NewStatus(http.StatusBadRequest, 40010, "接收文件失败")
 	FileFormatErrStatus        = NewStatus(http.StatusBadRequest, 40011, "文件格式错误")
 	PageDataErrStatus          = NewStatus(http.StatusBadRequest, 40012, "页码超出范围")
+	InvalidSemesterStatus      = NewStatus(http.StatusBadRequest, 40014, "学期格式错误")
+	InvalidTimeFormatStatus    = NewStatus(http.StatusBadRequest, 40015, "指定时间格式错误")
+	InvalidHoursStatus         = NewStatus(http.StatusBadRequest, 40016, "开课学时不能小于排课学时")
+	ScheduleNotFoundStatus     = NewStatus(http.StatusBadRequest, 40017, "排课任务不存在")
+	ScheduleHoursInvalidStatus = NewStatus(http.StatusBadRequest, 40018, "开课学时不能小于排课学时")
+	ScheduleIDInvalidStatus    = NewStatus(http.StatusBadRequest, 40019, "ID不合法")
 
 	//401
 	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")

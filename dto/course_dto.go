@@ -77,16 +77,16 @@ type CourseQueryAllResp struct {
 }
 
 type CourseAddByExcelResp struct {
-	AddSuccess int                 `json:"add_success"`
-	AddFail    int                 `json:"add_fail"`
+	AddSuccess int64               `json:"add_success"`
+	AddFail    int64               `json:"add_fail"`
 	FailList   []*CourseCreateResp `json:"fail_list"`
 }
 
 type CourseQueryByPageResp struct {
 	Total      int64           `json:"total"`      // 总记录数
 	TotalPages int64           `json:"totalPages"` // 总页数
-	Page       int             `json:"page"`       // 当前页码
-	PageSize   int             `json:"pageSize"`   // 每页数量
+	Page       int64           `json:"page"`       // 当前页码
+	PageSize   int64           `json:"pageSize"`   // 每页数量
 	Courses    []CourseGetResp `json:"courses"`    // 课程列表
 }
 

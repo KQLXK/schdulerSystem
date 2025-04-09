@@ -9,6 +9,10 @@ type CourseDeleteFlow struct {
 	CourseID string
 }
 
+func DeleteCourse(courseId string) error {
+	return NewCourseDeleteFlow(courseId).Do()
+}
+
 func NewCourseDeleteFlow(courseID string) *CourseDeleteFlow {
 	return &CourseDeleteFlow{CourseID: courseID}
 }

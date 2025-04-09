@@ -52,6 +52,21 @@ func SetupRoute() *gin.Engine {
 		classroomGroup.GET("/search", handlers.SearchClassroom)
 		classroomGroup.POST("/create/file", handlers.AddClassroomByExcel)
 	}
+
+	schedulegroup := r.Group("/schedule")
+	{
+		schedulegroup.POST("/create", handlers.CreateSchedule)
+		//group.POST("/import", handlers.)
+		schedulegroup.PUT("/update/:schedule_id", handlers.UpdateSchedule)
+		schedulegroup.DELETE("/delete/:schedule_id", handlers.DeleteSchedule)
+		schedulegroup.GET("/query/:schedule_id", handlers.GetSchedule)
+		schedulegroup.GET("/queryall", handlers.GetAllSchedules)
+		schedulegroup.GET("/querybypage", handlers.QuerySchedulesByPage)
+		schedulegroup.POST("/create/file", handlers.AddScheduleByExcel)
+		schedulegroup.GET("/ga", handlers.GAHandler)
+		//group.GET("/search", handlers.SearchSchedules)
+	}
+
 	return r
 
 }

@@ -9,6 +9,10 @@ type CourseGetFlow struct {
 	CourseID string
 }
 
+func GetCourse(courseID string) (*models.Course, error) {
+	return NewCourseGetFlow(courseID).Do()
+}
+
 func NewCourseGetFlow(courseID string) *CourseGetFlow {
 	return &CourseGetFlow{CourseID: courseID}
 }

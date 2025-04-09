@@ -2,6 +2,7 @@ package models
 
 import (
 	"gorm.io/gorm"
+	"log"
 	"schedule/database"
 	"sync"
 )
@@ -45,6 +46,15 @@ func (ClassDao) GetAllClasses() ([]Class, error) {
 func (ClassDao) GetClassByID(id string) (*Class, error) {
 	var class Class
 	if err := database.DB.Where("id = ?", id).First(&class).Error; err != nil {
+		return nil, err
+	}
+	return &class, nil
+}
+
+func (ClassDao) GetClassByName(name string) (*Class, error) {
+	var class Class
+	if err := database.DB.Model(&Class{}).First(&class).Error; err != nil {
+		log.Printf("get class by name failed, classname:%s, err:%v", class.Name, err)
 		return nil, err
 	}
 	return &class, nil

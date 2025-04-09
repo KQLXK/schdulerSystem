@@ -98,7 +98,7 @@ func (f *CourseAddByExcelFlow) ReadFile() ([][]string, error) {
 
 func (f *CourseAddByExcelFlow) AddCourse(fieldMap map[string]int, dataRows [][]string) *dto.CourseAddByExcelResp {
 	faillist := make([]*dto.CourseCreateResp, 0)
-	var successcount, failcount int
+	var successcount, failcount int64
 
 	for _, row := range dataRows {
 		//if i > 2 {
