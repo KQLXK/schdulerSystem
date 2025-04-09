@@ -107,7 +107,7 @@ func QueryTeacherByPage(c *gin.Context) {
 }
 
 func SearchTeacher(c *gin.Context) {
-	searchStr := c.PostForm("search_str")
+	searchStr := c.Query("search_str")
 	resp, err := teacher.TeacherSearch(searchStr)
 	if err != nil {
 		result.Errors(c, err)

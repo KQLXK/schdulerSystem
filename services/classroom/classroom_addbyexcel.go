@@ -53,7 +53,7 @@ func (f *ClassroomAddByExcelFlow) Do() (*dto.ClassroomAddByExcelResp, error) {
 	}
 	f.ClassroomList = classroomList
 
-	if len(f.ClassroomList) < 1 {
+	if len(f.ClassroomList) < 2 {
 		return nil, errors.New("文件内容为空")
 	}
 	headers := f.ClassroomList[1]
