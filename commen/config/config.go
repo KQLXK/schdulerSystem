@@ -22,6 +22,7 @@ type Config struct {
 	Prometheus PrometheusConfig `yaml:"prometheus"`
 	Logstash   LogstashConfig   `yaml:"logstash"`
 	JWT        JWTConfig        `yaml:"jwt"`
+	GA         GAConfig         `yaml:"GAParams"`
 }
 
 // DatabaseConfig 代表数据库配置
@@ -61,8 +62,17 @@ type JWTConfig struct {
 	ExpirationTime string `yaml:"expiration_time"`
 }
 
+type GAConfig struct {
+	PopulationSize int     `yaml:"PopulationSize"`
+	CrossoverRate  float64 `yaml:"CrossoverRate"`
+	MutationRate   float64 `yaml:"MutationRate"`
+	MaxGenerations int     `yaml:"MaxGenerations"`
+	TournamentSize int     `yaml:"TournamentSize"`
+	ElitismCount   int     `yaml:"ElitismCount"`
+}
+
 // LoadConfig 从YAML文件中加载配置
-func LoadConfig() (*Config, error) {
+func loadConfig() (*Config, error) {
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %v", err)
@@ -79,7 +89,7 @@ func LoadConfig() (*Config, error) {
 // GetConfig 返回配置的单例实例
 func GetConfig() *Config {
 	ConfOnce.Do(func() {
-		conf, err := LoadConfig()
+		conf, err := loadConfig()
 		if err != nil {
 			log.Fatalf("error loading config: %v", err)
 		}
