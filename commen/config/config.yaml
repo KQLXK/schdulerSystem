@@ -2,7 +2,7 @@ database:
   host: localhost
   port: 3306
   user: root
-  password: admin
+  password: yuchao123
   name: scheduler
 
 redis:
@@ -20,5 +20,13 @@ logstash:
   addr: localhost:5000
 
 jwt:
-  secret_key: your_secret_key
+  secret_key: yoursecretkey
   expiration_time: 24h
+
+GAParams:
+  PopulationSize: 500         # 种群大小
+  CrossoverRate: 0.8          # 交叉率
+  MutationRate: 0.01          # 变异率
+  MaxGenerations: 20        # 最大世代数
+  TournamentSize: 5           # 锦标赛大小
+  ElitismCount: 2             # 保留的精英数量
