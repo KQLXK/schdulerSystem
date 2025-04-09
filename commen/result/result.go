@@ -26,6 +26,7 @@ var (
 	ScheduleNotFoundStatus     = NewStatus(http.StatusBadRequest, 40017, "排课任务不存在")
 	ScheduleHoursInvalidStatus = NewStatus(http.StatusBadRequest, 40018, "开课学时不能小于排课学时")
 	ScheduleIDInvalidStatus    = NewStatus(http.StatusBadRequest, 40019, "ID不合法")
+	GetQueryStringfailed       = NewStatus(http.StatusBadRequest, 40020, "获取query参数失败")
 
 	//401
 	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")

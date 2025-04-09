@@ -13,6 +13,7 @@ func InitTables() error {
 		&Course{},
 		&Class{},
 		&Schedule{},
+		&ScheduleResult{},
 	); err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 		return err

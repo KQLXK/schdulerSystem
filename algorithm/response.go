@@ -118,6 +118,7 @@ func convertToScheduleResult(gene ScheduleGene, s *Scheduler) models.ScheduleRes
 	schedule := s.findScheduleByID(gene.ScheduleID)
 	teacher := s.findTeacherByID(gene.TeacherID)
 	return models.ScheduleResult{
+		Semester:    schedule.Semester,
 		ScheduleID:  int(schedule.ID),
 		CourseID:    schedule.CourseID,
 		CourseName:  schedule.CourseName,

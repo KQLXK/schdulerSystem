@@ -67,6 +67,11 @@ func SetupRoute() *gin.Engine {
 		//group.GET("/search", handlers.SearchSchedules)
 	}
 
+	tableGroup := r.Group("/table")
+	{
+		tableGroup.GET("/class", handlers.GetClassTableHandler)
+	}
+
 	return r
 
 }
