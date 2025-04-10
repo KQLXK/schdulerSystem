@@ -14,10 +14,20 @@ func GetClassScheduleBySemester(classID string, semester string) ([]models.Sched
 
 	// 过滤出符合条件的排课结果
 	for _, result := range scheduleResults {
-		if result.ClassroomID == classID && result.Schedule.Semester == semester {
+		if IsClassInClassList(classID, result.ClassIDs) && result.Schedule.Semester == semester {
 			scheduleResults = append(scheduleResults, result)
 		}
 	}
 
 	return scheduleResults, nil
+}
+
+// 判断class是否在[]class中的函数
+func IsClassInClassList(class string, classList []string) bool {
+	for _, c := range classList {
+		if c == class {
+			return true
+		}
+	}
+	return false
 }

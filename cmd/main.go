@@ -29,6 +29,7 @@ func main() {
 	//	ClassroomID: "A101",
 	//	TeacherID:   "T001",
 	//	TeacherName: "张老师",
+	//	ClassIDs:    []string{"301", "303"},
 	//	TimeSlots:   timeSlots,
 	//}
 	//

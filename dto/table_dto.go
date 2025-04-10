@@ -15,5 +15,7 @@ type ClassTable struct {
 	TeacherID   string               `json:"teacher_id"`
 	TeacherName string               `json:"teacher_name"`
 	ClassroomID string               `json:"classroom_id"`
+	ClassIDs    []string             `json:"class_ids"`
+	ClassNames  []string             `json:"class_name"`
 	Timeslots   models.JSONTimeSlots `json:"time_slots"`
 }

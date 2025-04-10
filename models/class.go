@@ -62,7 +62,7 @@ func (ClassDao) GetClassByID(id string) (*Class, error) {
 
 func (ClassDao) GetClassByName(name string) (*Class, error) {
 	var class Class
-	if err := database.DB.Model(&Class{}).First(&class).Error; err != nil {
+	if err := database.DB.Model(&Class{}).Where("name like ?", "%"+name+"%").First(&class).Error; err != nil {
 		log.Printf("get class by name failed, classname:%s, err:%v", class.Name, err)
 		return nil, err
 	}

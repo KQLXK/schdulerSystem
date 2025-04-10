@@ -49,20 +49,25 @@ type ScheduleGAResponse struct {
 
 // 成功条目
 type SuccessItem struct {
-	ScheduleID  int               `json:"schedule_id"`
-	CourseID    string            `json:"course_id"`
-	CourseName  string            `json:"course_name"`
-	TimeSlots   []models.TimeSlot `json:"time_slots"`
-	ClassroomID string            `json:"classroom_id"`
-	Classroom   string            `json:"classroom"`
-	TeacherID   string            `json:"teacher_id"`
-	Teacher     string            `json:"teacher"`
+	ScheduleID    int               `json:"schedule_id"`
+	CourseID      string            `json:"course_id"`
+	CourseName    string            `json:"course_name"`
+	TimeSlots     []models.TimeSlot `json:"time_slots"`
+	ClassroomID   string            `json:"classroom_id"`
+	ClassroomName string            `json:"classroom_name"`
+	TeacherID     string            `json:"teacher_id"`
+	TeacherName   string            `json:"teacher_name"`
 }
 
 // 失败条目
 type FailedItem struct {
 	ScheduleID       int               `json:"schedule_id"`
 	CourseName       string            `json:"course_name"`
+	ClassroomID      string            `json:"classroom_id"`
+	ClassroomName    string            `json:"classroom_name"`
+	TeacherID        string            `json:"teacher_id"`
+	TeacherName      string            `json:"teacher_name"`
+	TimeSlots        []models.TimeSlot `json:"time_slots"`
 	ConflictReasons  []string          `json:"reasons"`
 	SuggestedTimes   []models.TimeSlot `json:"suggested_times,omitempty"`
 	AlternativeRooms []string          `json:"alternative_rooms,omitempty"`

@@ -82,6 +82,8 @@ func SetupRoute() *gin.Engine {
 	tableGroup := r.Group("/table")
 	{
 		tableGroup.GET("/class", handlers.GetClassTableHandler)
+		tableGroup.GET("/teacher", handlers.GetTeacherTableHandler)
+		tableGroup.GET("/classroom", handlers.GetClassroomTableHandler)
 	}
 
 	return r

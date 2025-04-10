@@ -10,19 +10,21 @@ import (
 
 type ScheduleResult struct {
 	gorm.Model
-	ID          uint          `gorm:"primaryKey;autoIncrement"` // 主键ID
+	ID          uint          `gorm:"primarykey;autoIncrement"` // 主键ID
 	Semester    string        `gorm:"column:semester;varchar(20)"`
 	ScheduleID  int           `gorm:"column:schedule_id;varchar(20)"` // 排课ID
-	Schedule    Schedule      `gorm:"foreignKey:ScheduleID"`
+	Schedule    Schedule      `gorm:"foreignkey:ScheduleID"`
 	CourseID    string        `gorm:"column:course_id"`               // 课程ID，外键
 	CourseName  string        `gorm:"column:course_name;varchar(20)"` // 课程名称
-	Course      Course        `gorm:"foreignKey:CourseID"`
+	Course      Course        `gorm:"foreignkey:CourseID"`
 	ClassroomID string        `gorm:"column:classroom_id;varchar(20)"` // 教室ID，外键
-	Classroom   Classroom     `gorm:"foreignKey:ClassroomID"`          // 教室名称
+	Classroom   Classroom     `gorm:"foreignkey:ClassroomID"`          // 教室名称
 	TeacherID   string        `gorm:"column:teacher_id;varchar(20)"`   // 教师ID，外键
 	TeacherName string        `gorm:"column:teacher_name;varchar(20)"`
-	Teacher     Teacher       `gorm:"foreignKey:TeacherID"` // 教师名称
-	TimeSlots   JSONTimeSlots `gorm:"type:json"`            // 时间槽（JSON类型），可以直接嵌套
+	Teacher     Teacher       `gorm:"foreignkey:TeacherID"` // 教师名称
+	ClassIDs    JSONStrings   `gorm:"type:json"`
+	ClassNames  JSONStrings   `gorm:"type:json"`
+	TimeSlots   JSONTimeSlots `gorm:"type:json"` // 时间槽（JSON类型），可以直接嵌套
 }
 
 // 时间段结构
@@ -31,6 +33,23 @@ type TimeSlot struct {
 	Weekday     int // 1-5（周一到周五）
 	StartPeriod int // 开始节次（1-12）
 	Duration    int // 持续节数
+}
+
+type JSONStrings []string
+
+func (c JSONStrings) Value() (driver.Value, error) {
+	return json.Marshal(c)
+}
+
+func (c *JSONStrings) Scan(value interface{}) error {
+	if value == nil {
+		return nil
+	}
+	bytes, ok := value.([]byte)
+	if !ok {
+		return fmt.Errorf("无法解析数据库字段：非字节数组类型")
+	}
+	return json.Unmarshal(bytes, c)
 }
 
 // 1. 定义自定义JSON类型
@@ -56,7 +75,7 @@ func (ts *JSONTimeSlots) Scan(value interface{}) error {
 // GetAllScheduleResults 获取所有排课结果
 func GetAllScheduleResults() ([]ScheduleResult, error) {
 	var scheduleResults []ScheduleResult
-	if err := database.DB.Find(&scheduleResults).Error; err != nil {
+	if err := database.DB.Preload("Schedule").Preload("Teacher").Preload("Classroom").Find(&scheduleResults).Error; err != nil {
 		return nil, err
 	}
 	return scheduleResults, nil

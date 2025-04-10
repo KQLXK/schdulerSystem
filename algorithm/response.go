@@ -50,7 +50,12 @@ func (s *Scheduler) GenerateScheduleResponse(chromosome Chromosome) *dto.Schedul
 		for i, fg := range validation.FailedGenes {
 			failedItems[i] = dto.FailedItem{
 				ScheduleID:      fg.ScheduleID,
-				CourseName:      s.findScheduleByID(int64(fg.ScheduleID)).CourseName,
+				CourseName:      s.scheduleMap[int64(fg.ScheduleID)].CourseName,
+				ClassroomID:     fg.ClassroomID,
+				TeacherID:       fg.TeacherID,
+				TimeSlots:       fg.TimeSlots,
+				TeacherName:     s.TeacherMap[fg.TeacherID].Name,
+				ClassroomName:   s.ClassroomMap[fg.ClassroomID].Name,
 				ConflictReasons: fg.ConflictReasons,
 				//SuggestedTimes:  s.suggestAlternativeTimes(fg),
 				//AlternativeRooms: s.findAlternativeClassrooms(fg),
@@ -98,25 +103,32 @@ func isGeneFailed(scheduleID int64, failedGenes []FailedGene) bool {
 
 // 转换成功条目
 func convertToSuccessItem(gene ScheduleGene, s *Scheduler) dto.SuccessItem {
-	schedule := s.findScheduleByID(gene.ScheduleID)
-	classroom := s.findClassroomByID(gene.ClassroomID)
-	teacher := s.findTeacherByID(gene.TeacherID)
+	schedule := s.scheduleMap[gene.ScheduleID]
+	classroom := s.ClassroomMap[gene.ClassroomID]
+	teacher := s.TeacherMap[gene.TeacherID]
 
 	return dto.SuccessItem{
-		ScheduleID:  int(gene.ScheduleID),
-		CourseID:    schedule.CourseID,
-		CourseName:  schedule.CourseName,
-		TimeSlots:   gene.TimeSlots,
-		ClassroomID: classroom.ID,
-		Classroom:   classroom.Name,
-		TeacherID:   teacher.ID,
-		Teacher:     teacher.Name,
+		ScheduleID:    int(gene.ScheduleID),
+		CourseID:      schedule.CourseID,
+		CourseName:    schedule.CourseName,
+		TimeSlots:     gene.TimeSlots,
+		ClassroomID:   classroom.ID,
+		ClassroomName: classroom.Name,
+		TeacherID:     teacher.ID,
+		TeacherName:   teacher.Name,
+		//ClassIDs:      schedule.TeachingClass,
 	}
 }
 
 func convertToScheduleResult(gene ScheduleGene, s *Scheduler) models.ScheduleResult {
-	schedule := s.findScheduleByID(gene.ScheduleID)
-	teacher := s.findTeacherByID(gene.TeacherID)
+	schedule := s.scheduleMap[gene.ScheduleID]
+	teacher := s.TeacherMap[gene.TeacherID]
+	class := s.parseTeachingClasses(schedule.TeachingClass)
+	var classIDs, classNames []string
+	for _, c := range class {
+		classIDs = append(classIDs, c.ID)
+		classNames = append(classNames, c.Name)
+	}
 	return models.ScheduleResult{
 		Semester:    schedule.Semester,
 		ScheduleID:  int(schedule.ID),
@@ -126,6 +138,8 @@ func convertToScheduleResult(gene ScheduleGene, s *Scheduler) models.ScheduleRes
 		TeacherID:   gene.TeacherID,
 		TeacherName: teacher.Name,
 		TimeSlots:   gene.TimeSlots,
+		ClassIDs:    classIDs,
+		ClassNames:  classNames,
 	}
 }
 

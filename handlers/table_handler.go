@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"schedule/commen/result"
 	"schedule/dto"
@@ -31,6 +32,50 @@ func GetClassTableHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+func GetTeacherTableHandler(c *gin.Context) {
+	teacherID := c.Query("teacher_id")
+	semester := c.Query("semester")
+
+	if teacherID == "" || semester == "" {
+		result.Error(c, result.GetQueryStringfailed)
+		return
+	}
+	log.Println("/table/teacher: get req success, teacher_id:", teacherID, "semester:", semester)
+
+	scheduleResults, err := table.GetTeacherScheduleBySemester(teacherID, semester)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+
+	var resp dto.GetClassTableResp
+	resp.ClassTables = ConvertScheduleResultsToClassTables(scheduleResults)
+
+	c.JSON(http.StatusOK, resp)
+}
+
+func GetClassroomTableHandler(c *gin.Context) {
+	ClassroomID := c.Query("classroom_id")
+	semester := c.Query("semester")
+
+	if ClassroomID == "" || semester == "" {
+		result.Error(c, result.GetQueryStringfailed)
+		return
+	}
+	log.Println("/table/classroom: get req success, classroom_id:", ClassroomID, "semester:", semester)
+
+	scheduleResults, err := table.GetClassroomScheduleBySemester(ClassroomID, semester)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+
+	var resp dto.GetClassTableResp
+	resp.ClassTables = ConvertScheduleResultsToClassTables(scheduleResults)
+
+	c.JSON(http.StatusOK, resp)
+}
+
 func ConvertScheduleResultsToClassTables(scheduleResults []models.ScheduleResult) []dto.ClassTable {
 	var classTables []dto.ClassTable
 
@@ -44,6 +89,8 @@ func ConvertScheduleResultsToClassTables(scheduleResults []models.ScheduleResult
 			TeacherID:   result.TeacherID,
 			TeacherName: result.TeacherName,
 			ClassroomID: result.ClassroomID,
+			ClassIDs:    result.ClassIDs,
+			ClassNames:  result.ClassNames,
 			Timeslots:   result.TimeSlots, // 假设 TimeSlots 是 JSON 类型
 		}
 		classTables = append(classTables, classTable)

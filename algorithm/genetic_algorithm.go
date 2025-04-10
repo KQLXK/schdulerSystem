@@ -65,10 +65,13 @@ type GAParams struct {
 // 排课系统
 type Scheduler struct {
 	Schedules    []models.Schedule
+	scheduleMap  map[int64]models.Schedule
 	Classrooms   []models.Classroom
 	ClassroomMap map[string]models.Classroom
 	Teachers     []models.Teacher
+	TeacherMap   map[string]models.Teacher
 	Classes      []models.Class
+	ClassMap     map[string]models.Class
 	Config       dto.Config
 	GAParams     GAParams
 	Rng          *rand.Rand
@@ -121,6 +124,10 @@ func NewScheduler(conf *dto.Config, ScheduleList []int) *Scheduler {
 			schedules = append(schedules, *schedule)
 		}
 	}
+	// 按排课优先级排序
+	sort.Slice(schedules, func(i, j int) bool {
+		return schedules[i].SchedulingPriority > schedules[j].SchedulingPriority
+	})
 
 	teachers, err := models.GetAllTeachers()
 	if err != nil {
@@ -139,6 +146,22 @@ func NewScheduler(conf *dto.Config, ScheduleList []int) *Scheduler {
 		classroomMap[c.ID] = c
 	}
 
+	scheduleMap := make(map[int64]models.Schedule)
+	for _, c := range schedules {
+		scheduleMap[c.ID] = c
+	}
+
+	//帮我写一下
+	teacherMap := make(map[string]models.Teacher)
+	for _, c := range teachers {
+		teacherMap[c.ID] = c
+	}
+
+	classMap := make(map[string]models.Class)
+	for _, c := range classes {
+		classMap[c.Name] = c
+	}
+
 	// 3. 加载配置
 	gaConfig := config.GetConfig().GA
 
@@ -152,6 +175,9 @@ func NewScheduler(conf *dto.Config, ScheduleList []int) *Scheduler {
 		Teachers:     teachers,
 		Classes:      classes,
 		ClassroomMap: classroomMap, // 新增的快速查询映射
+		TeacherMap:   teacherMap,
+		ClassMap:     classMap,
+		scheduleMap:  scheduleMap,
 		Rng:          rng,
 		Config:       *conf,
 		GAParams: GAParams{
@@ -228,9 +254,9 @@ func (s *Scheduler) InitializePopulation() []Chromosome {
 	// 按优先级降序排序
 	sortedSchedules := make([]models.Schedule, len(s.Schedules))
 	copy(sortedSchedules, s.Schedules)
-	sort.Slice(sortedSchedules, func(i, j int) bool {
-		return sortedSchedules[i].SchedulingPriority > sortedSchedules[j].SchedulingPriority
-	})
+	//sort.Slice(sortedSchedules, func(i, j int) bool {
+	//	return sortedSchedules[i].SchedulingPriority > sortedSchedules[j].SchedulingPriority
+	//})
 
 	population := make([]Chromosome, s.GAParams.PopulationSize)
 	for i := 0; i < s.GAParams.PopulationSize; i++ {
@@ -339,7 +365,7 @@ func (s *Scheduler) CalculateFitness(chromosome Chromosome) Fitness {
 
 	// 第一遍遍历：收集基础数据和硬约束
 	for _, gene := range chromosome {
-		schedule := s.findScheduleByID(gene.ScheduleID)
+		schedule := s.scheduleMap[gene.ScheduleID]
 		classes := s.parseTeachingClasses(schedule.TeachingClass)
 		courseID := schedule.CourseID
 
@@ -392,7 +418,7 @@ func (s *Scheduler) CalculateFitness(chromosome Chromosome) Fitness {
 			}
 
 			// 2. 教室容量检查
-			classroom := s.findClassroomByID(gene.ClassroomID)
+			classroom := s.ClassroomMap[gene.ClassroomID]
 			if classroom.Capacity < int(schedule.TeachingClassSize) {
 				fitness.HardViolations += 3 // 严重违规
 			}
@@ -446,7 +472,7 @@ func (s *Scheduler) CalculateFitness(chromosome Chromosome) Fitness {
 	// 5. 优先级加分
 	// todo: 处理优先级
 	for _, gene := range chromosome {
-		schedule := s.findScheduleByID(gene.ScheduleID)
+		schedule := s.scheduleMap[gene.ScheduleID]
 		fitness.SoftScores += int(schedule.SchedulingPriority) * 10
 	}
 
@@ -614,7 +640,7 @@ func (s *Scheduler) checkTeacherConstraints(fitness *Fitness, stats map[string]*
 // todo:体育，实验等类型的区分
 func (s *Scheduler) checkCourseTypeConstraints(fitness *Fitness, chromosome Chromosome) {
 	for _, gene := range chromosome {
-		schedule := s.findScheduleByID(gene.ScheduleID)
+		schedule := s.scheduleMap[gene.ScheduleID]
 		courseType := schedule.Course.Type
 
 		for _, ts := range gene.TimeSlots {
@@ -682,7 +708,7 @@ func (s *Scheduler) calculateResource(fitness *Fitness, chromosome *Chromosome) 
 
 	// 遍历每个基因（教学班）
 	for _, gene := range *chromosome {
-		schedule := s.findScheduleByID(gene.ScheduleID)
+		schedule := s.scheduleMap[gene.ScheduleID]
 		classes := s.parseTeachingClasses(schedule.TeachingClass)
 
 		// 检查每个时间段
@@ -709,7 +735,7 @@ func (s *Scheduler) calculateResource(fitness *Fitness, chromosome *Chromosome) 
 				s.markResourceOccupancy(class.ID, ts, classOccupancy)
 			}
 			// 示例：教室容量是否足够
-			classroom := s.findClassroomByID(gene.ClassroomID)
+			classroom := s.ClassroomMap[gene.ClassroomID]
 			if classroom.Capacity < int(schedule.TeachingClassSize) {
 				fitness.HardViolations += 1
 			}
@@ -783,7 +809,8 @@ func (s *Scheduler) Mutate(chromosome Chromosome) Chromosome {
 	for i := range chromosome {
 		if rand.Float64() < s.GAParams.MutationRate {
 			// 随机改变时间或教室
-			newGene := s.GenerateRandomGene(s.findScheduleByID(chromosome[i].ScheduleID))
+			schedule := s.scheduleMap[chromosome[i].ScheduleID]
+			newGene := s.GenerateRandomGene(&schedule)
 			chromosome[i] = newGene
 		}
 	}
@@ -814,8 +841,8 @@ func (s *Scheduler) parseTeachingClasses(classes string) []models.Class {
 	classlist := strings.Split(classes, ",")
 	res := make([]models.Class, 0)
 	for _, val := range classlist {
-		class, _ := models.NewClassDaoInstance().GetClassByName(val)
-		res = append(res, *class)
+		class, _ := s.ClassMap[val]
+		res = append(res, class)
 	}
 	return res
 }

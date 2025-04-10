@@ -71,8 +71,8 @@ func (s *Scheduler) ValidateSchedule(chromosome Chromosome) ScheduleValidation {
 	conflictRecorder := NewConflictRecorder()
 
 	for _, gene := range chromosome {
-		schedule := s.findScheduleByID(gene.ScheduleID)
-		if schedule == nil {
+		_, ok := s.scheduleMap[gene.ScheduleID]
+		if !ok {
 			recordInvalidGene(&validation, gene, "无效教学班ID")
 			continue
 		}
@@ -172,7 +172,7 @@ func (s *Scheduler) checkTeacherConflicts(gene ScheduleGene, tracker *ResourceTr
 
 // 班级冲突检查
 func (s *Scheduler) checkClassConflicts(gene ScheduleGene, tracker *ResourceTracker, recorder *ConflictRecorder) {
-	schedule := s.findScheduleByID(gene.ScheduleID)
+	schedule := s.scheduleMap[gene.ScheduleID]
 	classes := s.parseTeachingClasses(schedule.TeachingClass)
 
 	for _, class := range classes {
@@ -301,7 +301,7 @@ func (s *Scheduler) findAlternativeClassrooms(gene ScheduleGene) []string {
 		}
 
 		// 检查容量是否足够
-		schedule := s.findScheduleByID(gene.ScheduleID)
+		schedule := s.scheduleMap[gene.ScheduleID]
 		if c.Capacity >= int(schedule.TeachingClassSize) {
 			candidates = append(candidates, c.ID)
 		}
