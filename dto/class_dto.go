@@ -10,15 +10,14 @@ type ClassCreateReq struct {
 	Type           string `json:"type"`
 	ExpectedYear   string `json:"expected_year"`
 	IsGraduation   string `json:"is_graduation"`
-	StudentCount   int    `json:"student_count"`
-	MaxCount       int    `json:"max_count"`
+	StudentCount   string `json:"student_count"`
+	MaxCount       string `json:"max_count"`
 	Year           string `json:"year"`
 	Department     string `json:"department"`
 	MajorID        string `json:"major_id"`
 	Major          string `json:"major"`
 	Campus         string `json:"campus"`
 	FixedClassroom string `json:"fixed_classroom"`
-	IsFixed        string `json:"is_fixed"`
 }
 
 type ClassCreateResp struct {
@@ -35,15 +34,14 @@ type ClassUpdateReq struct {
 	Type           string `json:"type"`
 	ExpectedYear   string `json:"expected_year"`
 	IsGraduation   string `json:"is_graduation"`
-	StudentCount   int    `json:"student_count"`
-	MaxCount       int    `json:"max_count"`
+	StudentCount   string `json:"student_count"`
+	MaxCount       string `json:"max_count"`
 	Year           string `json:"year"`
 	Department     string `json:"department"`
 	MajorID        string `json:"major_id"`
 	Major          string `json:"major"`
 	Campus         string `json:"campus"`
 	FixedClassroom string `json:"fixed_classroom"`
-	IsFixed        string `json:"is_fixed"`
 }
 
 type ClassGetResp struct {
@@ -54,15 +52,14 @@ type ClassGetResp struct {
 	Type           string    `json:"type"`
 	ExpectedYear   string    `json:"expected_year"`
 	IsGraduation   string    `json:"is_graduation"`
-	StudentCount   int       `json:"student_count"`
-	MaxCount       int       `json:"max_count"`
+	StudentCount   string    `json:"student_count"`
+	MaxCount       string    `json:"max_count"`
 	Year           string    `json:"year"`
 	Department     string    `json:"department"`
 	MajorID        string    `json:"major_id"`
 	Major          string    `json:"major"`
 	Campus         string    `json:"campus"`
 	FixedClassroom string    `json:"fixed_classroom"`
-	IsFixed        string    `json:"is_fixed"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

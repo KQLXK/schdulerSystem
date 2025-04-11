@@ -7,7 +7,6 @@ import (
 	"schedule/commen/utils"
 	"schedule/dto"
 	"schedule/models"
-	"strconv"
 	"strings"
 )
 
@@ -32,8 +31,7 @@ var classFieldToColumn = map[string]string{
 	"MajorID":        "专业编号",
 	"Major":          "专业",
 	"Campus":         "校区",
-	"FixedClassroom": "固定教室",
-	"IsFixed":        "固定教室",
+	"FixedClassroom": "固定教室", // 只映射第一个"固定教室"列
 }
 
 type ClassAddByExcelFlow struct {
@@ -64,9 +62,16 @@ func (f *ClassAddByExcelFlow) Do() (*dto.ClassAddByExcelResp, error) {
 	headers := f.ClassList[1]
 	dataRows := f.ClassList[2:]
 
+	// 创建列名到索引的映射，确保只取第一个"固定教室"
 	columnMap := make(map[string]int)
+	seenColumns := make(map[string]bool) // 用于跟踪已处理的列名
+
 	for i, header := range headers {
-		columnMap[header] = i
+		trimmedHeader := strings.TrimSpace(header)
+		if !seenColumns[trimmedHeader] {
+			columnMap[trimmedHeader] = i
+			seenColumns[trimmedHeader] = true
+		}
 	}
 
 	fieldMap := make(map[string]int)
@@ -130,7 +135,7 @@ func (f *ClassAddByExcelFlow) AddClass(fieldMap map[string]int, dataRows [][]str
 }
 
 func parseClass(row []string, fieldMap map[string]int) (*models.Class, error) {
-	var err error
+	//var err error
 	class := &models.Class{
 		ID:             getValueSafely(row, fieldMap["ID"]),
 		Name:           getValueSafely(row, fieldMap["Name"]),
@@ -139,26 +144,27 @@ func parseClass(row []string, fieldMap map[string]int) (*models.Class, error) {
 		Type:           getValueSafely(row, fieldMap["Type"]),
 		ExpectedYear:   getValueSafely(row, fieldMap["ExpectedYear"]),
 		IsGraduation:   getValueSafely(row, fieldMap["IsGraduation"]),
+		StudentCount:   getValueSafely(row, fieldMap["StudentCount"]),
+		MaxCount:       getValueSafely(row, fieldMap["MaxCount"]),
 		Year:           getValueSafely(row, fieldMap["Year"]),
 		Department:     getValueSafely(row, fieldMap["Department"]),
 		MajorID:        getValueSafely(row, fieldMap["MajorID"]),
 		Major:          getValueSafely(row, fieldMap["Major"]),
 		Campus:         getValueSafely(row, fieldMap["Campus"]),
 		FixedClassroom: getValueSafely(row, fieldMap["FixedClassroom"]),
-		IsFixed:        getValueSafely(row, fieldMap["IsFixed"]),
 	}
 
 	// 处理班级人数
-	studentCountStr := getValueSafely(row, fieldMap["StudentCount"])
-	if class.StudentCount, err = strconv.Atoi(studentCountStr); err != nil {
-		return nil, fmt.Errorf("%w: 班级人数", InvalidDataFormatErr)
-	}
+	//studentCountStr := getValueSafely(row, fieldMap["StudentCount"])
+	//if class.StudentCount, err = strconv.Atoi(studentCountStr); err != nil {
+	//	return nil, fmt.Errorf("%w: 班级人数", InvalidDataFormatErr)
+	//}
 
 	// 处理班级最大人数
-	maxCountStr := getValueSafely(row, fieldMap["MaxCount"])
-	if class.MaxCount, err = strconv.Atoi(maxCountStr); err != nil {
-		return nil, fmt.Errorf("%w: 班级最大人数", InvalidDataFormatErr)
-	}
+	//maxCountStr := getValueSafely(row, fieldMap["MaxCount"])
+	//if class.MaxCount, err = strconv.Atoi(maxCountStr); err != nil {
+	//	return nil, fmt.Errorf("%w: 班级最大人数", InvalidDataFormatErr)
+	//}
 
 	if class.ID == "" || class.Name == "" {
 		return nil, fmt.Errorf("班级编号或名称不能为空")

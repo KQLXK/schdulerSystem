@@ -27,7 +27,6 @@ func UpdateClass(id string, req dto.ClassUpdateReq) (*models.Class, error) {
 		Major:          req.Major,
 		Campus:         req.Campus,
 		FixedClassroom: req.FixedClassroom,
-		IsFixed:        req.IsFixed,
 	}
 
 	if err := models.NewClassDaoInstance().UpdateClass(id, &class); err != nil {

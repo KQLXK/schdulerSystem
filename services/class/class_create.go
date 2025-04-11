@@ -32,7 +32,6 @@ func CreateClass(req dto.ClassCreateReq) (*models.Class, error) {
 		Major:          req.Major,
 		Campus:         req.Campus,
 		FixedClassroom: req.FixedClassroom,
-		IsFixed:        req.IsFixed,
 	}
 
 	if err := models.NewClassDaoInstance().CreateClass(&class); err != nil {

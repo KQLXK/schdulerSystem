@@ -17,15 +17,14 @@ type Class struct {
 	Type           string `gorm:"type:varchar(100)"`           //班级类别
 	ExpectedYear   string `gorm:"type:varchar(100)"`           //预计毕业年度
 	IsGraduation   string `gorm:"type:varchar(100)"`           //是否毕业
-	StudentCount   int    `gorm:"type:int"`                    // 班级人数
-	MaxCount       int    `gorm:"type:int"`                    //班级最大人数
+	StudentCount   string `gorm:"type:varchar(100)"`           // 班级人数
+	MaxCount       string `gorm:"type:varchar(100)"`           //班级最大人数
 	Year           string `gorm:"type:varchar(100)"`           //入学年份
 	Department     string `gorm:"type:varchar(50)"`            // 所属院系
 	MajorID        string `gorm:"type:varchar(50)"`            //专业编号
 	Major          string `gorm:"type:varchar(50)"`            // 专业
 	Campus         string `gorm:"type:varchar(50)"`            // 校区
 	FixedClassroom string `gorm:"type:varchar(50)"`            //固定教室编号
-	IsFixed        string `gorm:"type:varchar(50)"`            //是否固定教室
 }
 
 type ClassDao struct{}

@@ -93,7 +93,6 @@ func (f *ClassQueryByPageFlow) Convert() []dto.ClassGetResp {
 			Major:          class.Major,
 			Campus:         class.Campus,
 			FixedClassroom: class.FixedClassroom,
-			IsFixed:        class.IsFixed,
 		}
 	}
 	return classResp
