@@ -780,7 +780,7 @@ func (s *Scheduler) markResourceOccupancy(resourceID string, ts models.TimeSlot,
 func (s *Scheduler) TournamentSelection(population []Chromosome, fitnesses []Fitness) Chromosome {
 	tournament := make([]int, s.GAParams.TournamentSize)
 	for i := 0; i < s.GAParams.TournamentSize; i++ {
-		tournament[i] = rand.Intn(len(population))
+		tournament[i] = s.Rng.Intn(len(population))
 	}
 	bestIdx := tournament[0]
 	for _, idx := range tournament[1:] {
@@ -807,7 +807,7 @@ func (s *Scheduler) Crossover(parent1, parent2 Chromosome) (Chromosome, Chromoso
 // 变异操作
 func (s *Scheduler) Mutate(chromosome Chromosome) Chromosome {
 	for i := range chromosome {
-		if rand.Float64() < s.GAParams.MutationRate {
+		if s.Rng.Float64() < s.GAParams.MutationRate {
 			// 随机改变时间或教室
 			schedule := s.scheduleMap[chromosome[i].ScheduleID]
 			newGene := s.GenerateRandomGene(&schedule)

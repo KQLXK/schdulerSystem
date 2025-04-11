@@ -87,3 +87,27 @@ type ResultAnalysis struct {
 	TeacherWorkload      map[string]int     `json:"teacher_workload"`  // 教师ID -> 总课时
 	TimeDistribution     map[string]int     `json:"time_distribution"` // 时间段 -> 课程数
 }
+
+// 手动排课请求结构
+type ManualScheduleRequest struct {
+	//Semester    string            `json:"semester" binding:"required"`
+	ScheduleID int `json:"schedule_id" binding:"required"`
+	//CourseID    string            `json:"course_id" binding:"required"`
+	ClassroomID string `json:"classroom_id" binding:"required"`
+	//TeacherID   string            `json:"teacher_id" binding:"required"`
+	//ClassIDs    []string          `json:"class_ids" binding:"required"`
+	TimeSlots []models.TimeSlot `json:"time_slots" binding:"required"`
+}
+
+// 排课结果响应结构
+type ScheduleResultResponse struct {
+	ID          uint              `json:"id"`
+	Semester    string            `json:"semester"`
+	CourseID    string            `json:"course_id"`
+	CourseName  string            `json:"course_name"`
+	ClassroomID string            `json:"classroom_id"`
+	TeacherID   string            `json:"teacher_id"`
+	TeacherName string            `json:"teacher_name"`
+	ClassIDs    []string          `json:"class_ids"`
+	TimeSlots   []models.TimeSlot `json:"time_slots"`
+}
