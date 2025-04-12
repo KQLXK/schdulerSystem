@@ -69,7 +69,7 @@ func SetupRoute() *gin.Engine {
 		schedulegroup.GET("/queryall", handlers.GetAllSchedules)
 		schedulegroup.GET("/querybypage", handlers.QuerySchedulesByPage)
 		schedulegroup.POST("/create/file", handlers.AddScheduleByExcel)
-		schedulegroup.GET("/ga", handlers.GAHandler)
+		schedulegroup.POST("/ga", handlers.GAHandler)
 		//group.GET("/search", handlers.SearchSchedules)
 	}
 
