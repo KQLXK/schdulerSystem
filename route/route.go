@@ -91,6 +91,7 @@ func SetupRoute() *gin.Engine {
 		tableGroup.GET("/teacher", handlers.GetTeacherTableHandler)
 		tableGroup.GET("/classroom", handlers.GetClassroomTableHandler)
 		tableGroup.POST("/create", handlers.ManualScheduleHandler)
+		tableGroup.PUT("/update", handlers.UpdateTableHandler)
 	}
 
 	return r

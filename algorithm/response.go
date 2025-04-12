@@ -143,20 +143,6 @@ func convertToScheduleResult(gene ScheduleGene, s *Scheduler) models.ScheduleRes
 	}
 }
 
-// 转换时间段格式
-func convertSlotsToDTO(slots []models.TimeSlot) []dto.SlotDTO {
-	dtos := make([]dto.SlotDTO, len(slots))
-	for i, slot := range slots {
-		dtos[i] = dto.SlotDTO{
-			Weeks:       slot.WeekNumbers,
-			Weekday:     slot.Weekday,
-			StartPeriod: slot.StartPeriod,
-			Duration:    slot.Duration,
-		}
-	}
-	return dtos
-}
-
 // 计算教室使用率
 func (s *Scheduler) calculateClassroomUtilization(chromosome Chromosome) map[string]float64 {
 	utilization := make(map[string]float64)

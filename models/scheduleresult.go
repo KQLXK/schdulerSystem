@@ -82,7 +82,7 @@ func GetAllScheduleResults() ([]ScheduleResult, error) {
 }
 
 // GetScheduleResultByID 根据ID获取排课结果
-func GetScheduleResultByID(id uint) (*ScheduleResult, error) {
+func GetScheduleResultByID(id int) (*ScheduleResult, error) {
 	var scheduleResult ScheduleResult
 	if err := database.DB.Where("id = ?", id).First(&scheduleResult).Error; err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func CreateScheduleResult(scheduleResult *ScheduleResult) error {
 }
 
 // UpdateScheduleResult 更新排课结果信息
-func UpdateScheduleResult(id uint, scheduleResult *ScheduleResult) error {
+func UpdateScheduleResult(id int, scheduleResult *ScheduleResult) error {
 	if err := database.DB.Model(&ScheduleResult{}).Where("id = ?", id).Updates(scheduleResult).Error; err != nil {
 		return err
 	}

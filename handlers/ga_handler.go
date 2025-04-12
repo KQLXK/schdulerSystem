@@ -26,8 +26,23 @@ func ManualScheduleHandler(c *gin.Context) {
 		result.Errors(c, err)
 		return
 	}
-	log.Println("schedule/ga: get req success, req:", req)
+	log.Println("/table/create: get req success, req:", req)
 	err := table.ManualSchedule(&req)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	result.Sucess(c, nil)
+}
+
+func UpdateTableHandler(c *gin.Context) {
+	var req dto.ScheduleResultUpdateReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		result.Errors(c, err)
+		return
+	}
+	log.Println("/table/update: get req success, req:", req)
+	err := table.UpdateTable(&req)
 	if err != nil {
 		result.Errors(c, err)
 		return

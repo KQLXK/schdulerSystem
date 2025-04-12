@@ -12,6 +12,7 @@ import (
 
 type ManualScheduleFlow struct {
 	*dto.ManualScheduleRequest
+	timeslots []models.TimeSlot
 	schedule  *models.Schedule
 	course    *models.Course
 	classroom *models.Classroom
@@ -72,6 +73,8 @@ func (m *ManualScheduleFlow) prepareData() error {
 	course, _ := models.NewCourseDao().GetCourseByID(m.schedule.CourseID)
 	classes := parseTeachingClasses(m.schedule.TeachingClass)
 	teacher, _ := models.GetTeacherByID(m.schedule.TeacherID)
+	timeslots := dto.ConvertSlotsToModel(m.TimeSlots)
+	m.timeslots = timeslots
 	m.course = course
 	m.teacher = teacher
 	m.classes = classes
@@ -150,7 +153,7 @@ func (m *ManualScheduleFlow) checkClassConflict() (bool, error) {
 func (m *ManualScheduleFlow) hasTimeConflict(existing []models.ScheduleResult) (bool, error) {
 	for _, result := range existing {
 		for _, existSlot := range result.TimeSlots {
-			for _, newSlot := range m.TimeSlots {
+			for _, newSlot := range m.timeslots {
 				if isTimeOverlap(existSlot, newSlot) {
 					return true, TimeSlotExistsErr
 				}
@@ -212,7 +215,7 @@ func (m *ManualScheduleFlow) createSchedule() error {
 		TeacherName: m.teacher.Name,
 		ClassIDs:    models.JSONStrings(classIDs),
 		ClassNames:  models.JSONStrings(classNames),
-		TimeSlots:   models.JSONTimeSlots(m.TimeSlots),
+		TimeSlots:   models.JSONTimeSlots(m.timeslots),
 	}
 
 	return models.CreateScheduleResult(scheduleResult)

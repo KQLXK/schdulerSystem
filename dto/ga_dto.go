@@ -75,7 +75,7 @@ type FailedItem struct {
 
 // 时间槽DTO
 type SlotDTO struct {
-	Weeks       []int `json:"weeks"`        // 周次列表
+	Weeks       []int `json:"week_numbers"` // 周次列表
 	Weekday     int   `json:"weekday"`      // 1-7
 	StartPeriod int   `json:"start_period"` // 开始节次
 	Duration    int   `json:"duration"`     // 持续节数
@@ -96,18 +96,38 @@ type ManualScheduleRequest struct {
 	ClassroomID string `json:"classroom_id" binding:"required"`
 	//TeacherID   string            `json:"teacher_id" binding:"required"`
 	//ClassIDs    []string          `json:"class_ids" binding:"required"`
-	TimeSlots []models.TimeSlot `json:"time_slots" binding:"required"`
+	TimeSlots []SlotDTO `json:"time_slots" binding:"required"`
 }
 
 // 排课结果响应结构
 type ScheduleResultResponse struct {
-	ID          uint              `json:"id"`
-	Semester    string            `json:"semester"`
-	CourseID    string            `json:"course_id"`
-	CourseName  string            `json:"course_name"`
-	ClassroomID string            `json:"classroom_id"`
-	TeacherID   string            `json:"teacher_id"`
-	TeacherName string            `json:"teacher_name"`
-	ClassIDs    []string          `json:"class_ids"`
-	TimeSlots   []models.TimeSlot `json:"time_slots"`
+	ID          uint      `json:"id"`
+	Semester    string    `json:"semester"`
+	CourseID    string    `json:"course_id"`
+	CourseName  string    `json:"course_name"`
+	ClassroomID string    `json:"classroom_id"`
+	TeacherID   string    `json:"teacher_id"`
+	TeacherName string    `json:"teacher_name"`
+	ClassIDs    []string  `json:"class_ids"`
+	TimeSlots   []SlotDTO `json:"time_slots"`
+}
+
+type ScheduleResultUpdateReq struct {
+	ScheduleResultID int       `json:"schedule_result_id" binding:"required"`
+	TimeSlots        []SlotDTO `json:"time_slots" binding:"required"`
+	ClassroomID      string    `json:"classroom_id" binding:"required"`
+}
+
+// 转换时间段格式
+func ConvertSlotsToModel(slots []SlotDTO) []models.TimeSlot {
+	timeslots := make([]models.TimeSlot, len(slots))
+	for i, slot := range slots {
+		timeslots[i] = models.TimeSlot{
+			WeekNumbers: slot.Weeks,
+			Weekday:     slot.Weekday,
+			StartPeriod: slot.StartPeriod,
+			Duration:    slot.Duration,
+		}
+	}
+	return timeslots
 }
