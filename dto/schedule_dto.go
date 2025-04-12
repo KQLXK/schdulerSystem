@@ -29,8 +29,8 @@ type ScheduleCreateReq struct {
 // ScheduleCreateResp 创建排课任务的响应
 type ScheduleCreateResp struct {
 	ScheduleID  int64  `json:"schedule_id"` // 排课任务ID
-	CourseName  string `json:"course_name"`
-	TeacherName string `json:"teacher_name"`
+	CourseName  string `json:"course_id"`
+	TeacherName string `json:"teacher_id"`
 	Semester    string `json:"semester"`      // 回显关键信息
 	Err         string `json:"err,omitempty"` // 错误信息（成功时为空）
 }

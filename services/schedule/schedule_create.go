@@ -18,7 +18,8 @@ var (
 )
 
 type ScheduleCreateFlow struct {
-	ScheduleId int64
+	Teacher  *models.Teacher
+	schedule *models.Schedule
 	dto.ScheduleCreateReq
 }
 
@@ -53,8 +54,10 @@ func (f *ScheduleCreateFlow) Do() (*dto.ScheduleCreateResp, error) {
 	}
 
 	return &dto.ScheduleCreateResp{
-		ScheduleID: f.ScheduleId, // 实际应替换为数据库生成的ID
-		Semester:   f.Semester,
+		ScheduleID:  f.schedule.ID, // 实际应替换为数据库生成的ID
+		CourseName:  f.schedule.CourseName,
+		TeacherName: f.Teacher.Name,
+		Semester:    f.Semester,
 	}, nil
 }
 
@@ -149,7 +152,8 @@ func (f *ScheduleCreateFlow) CreateSchedule() error {
 		log.Printf("创建排课任务失败: %v", err)
 		return err
 	}
-	f.ScheduleId = schedule.ID
+	f.schedule = schedule
+	f.Teacher, _ = models.GetTeacherByID(schedule.TeacherID)
 	return nil
 }
 
