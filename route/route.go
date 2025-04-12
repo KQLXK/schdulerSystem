@@ -19,6 +19,12 @@ func SetupRoute() *gin.Engine {
 		AllowCredentials: true,
 	}))
 
+	userGroup := r.Group("/user")
+	{
+		userGroup.POST("/login", handlers.UserLoginHandler)
+		//userGroup.POST("/register", handlers.RegisterHandler)
+	}
+
 	courseGroup := r.Group("/course")
 	{
 		courseGroup.POST("/create", handlers.AddCourse)

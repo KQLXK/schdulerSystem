@@ -34,3 +34,7 @@ func ParseBool(str string) (bool, error) {
 	}
 	return false, nil
 }
+
+func IsEmpty() bool {
+	return false
+}

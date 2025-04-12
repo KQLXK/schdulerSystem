@@ -29,6 +29,7 @@ var (
 	GetQueryStringfailed       = NewStatus(http.StatusBadRequest, 40020, "获取query参数失败")
 	ClassExistsStatus          = NewStatus(http.StatusBadRequest, 40021, "班级编号或名称已存在")
 	ClassNotFoundStatus        = NewStatus(http.StatusBadRequest, 40022, "班级未找到")
+	GetReqErrStatus            = NewStatus(http.StatusBadRequest, 400023, "无法获取请求参数")
 
 	//401
 	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")
