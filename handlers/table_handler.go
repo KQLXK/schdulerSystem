@@ -4,11 +4,72 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
 	"schedule/commen/result"
 	"schedule/dto"
 	"schedule/models"
+	"schedule/services/class"
+	"schedule/services/classroom"
+	"schedule/services/course"
+	"schedule/services/schedule"
 	"schedule/services/table"
+	"schedule/services/teacher"
+	"strings"
 )
+
+func AddDataByExcel(c *gin.Context) {
+	file, err := c.FormFile("any_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+	tempFilePath := "./tmp/" + file.Filename
+	if err = c.SaveUploadedFile(file, tempFilePath); err != nil {
+		log.Println("save uploaded file failed, err:", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
+	}
+	defer os.Remove(tempFilePath)
+	switch switchfilename(file.Filename) {
+	case "schedule":
+		resp, err := schedule.AddByExcel(file.Filename)
+		if err != nil {
+			result.Errors(c, err)
+			return
+		}
+		result.Sucess(c, resp)
+	case "class":
+		resp, err := class.ClassAddByExcel(file.Filename)
+		if err != nil {
+			result.Errors(c, err)
+			return
+		}
+		result.Sucess(c, resp)
+	case "teacher":
+		resp, err := teacher.TeacherAddByExcel(file.Filename)
+		if err != nil {
+			result.Errors(c, err)
+			return
+		}
+		result.Sucess(c, resp)
+	case "course":
+		resp, err := course.CourseAddByExcel(file.Filename)
+		if err != nil {
+			result.Errors(c, err)
+			return
+		}
+		result.Sucess(c, resp)
+	case "classroom":
+		resp, err := classroom.ClassroomAddByExcel(file.Filename)
+		if err != nil {
+			result.Errors(c, err)
+			return
+		}
+		result.Sucess(c, resp)
+	default:
+		result.Error(c, result.FileNameErrStatus)
+	}
+}
 
 // GetClassScheduleHandler 处理查询班级课表的请求
 func GetClassTableHandler(c *gin.Context) {
@@ -97,4 +158,20 @@ func ConvertScheduleResultsToClassTables(scheduleResults []models.ScheduleResult
 	}
 
 	return classTables
+}
+
+func switchfilename(filename string) string {
+	if strings.Contains(filename, "排课任务") {
+		return "schedule"
+	} else if strings.Contains(filename, "课程") {
+		return "course"
+	} else if strings.Contains(filename, "教室") {
+		return "classroom"
+	} else if strings.Contains(filename, "教师") {
+		return "teacher"
+	} else if strings.Contains(filename, "班级") {
+		return "class"
+	} else {
+		return ""
+	}
 }

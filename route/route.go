@@ -94,6 +94,11 @@ func SetupRoute() *gin.Engine {
 		tableGroup.PUT("/update", handlers.UpdateTableHandler)
 	}
 
+	excelGroup := r.Group("/excel")
+	{
+		excelGroup.POST("/adddata", handlers.AddDataByExcel)
+	}
+
 	return r
 
 }

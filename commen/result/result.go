@@ -29,7 +29,8 @@ var (
 	GetQueryStringfailed       = NewStatus(http.StatusBadRequest, 40020, "获取query参数失败")
 	ClassExistsStatus          = NewStatus(http.StatusBadRequest, 40021, "班级编号或名称已存在")
 	ClassNotFoundStatus        = NewStatus(http.StatusBadRequest, 40022, "班级未找到")
-	GetReqErrStatus            = NewStatus(http.StatusBadRequest, 400023, "无法获取请求参数")
+	GetReqErrStatus            = NewStatus(http.StatusBadRequest, 40023, "无法获取请求参数")
+	FileNameErrStatus          = NewStatus(http.StatusBadRequest, 40024, "无法识别文件,请确保文件名中含有'教师','教室','班级','课程','排课任务'中的一个")
 
 	//401
 	TokenExpiredStatus   = NewStatus(http.StatusUnauthorized, 40101, "登录已过期")
