@@ -3,8 +3,8 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"mime/multipart"
 	"net/http"
-	"os"
 	"schedule/commen/result"
 	"schedule/dto"
 	"schedule/models"
@@ -18,57 +18,130 @@ import (
 )
 
 func AddDataByExcel(c *gin.Context) {
-	file, err := c.FormFile("any_file")
+	// 获取所有文件
+	courseFile, err := c.FormFile("course_file")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
-	tempFilePath := "./tmp/" + file.Filename
-	if err = c.SaveUploadedFile(file, tempFilePath); err != nil {
-		log.Println("save uploaded file failed, err:", err)
+
+	scheduleFile, err := c.FormFile("schedule_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+
+	classroomFile, err := c.FormFile("classroom_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+
+	teacherFile, err := c.FormFile("teacher_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+
+	classFile, err := c.FormFile("class_file")
+	if err != nil {
+		result.Error(c, result.FileNotReceiveStatus)
+		return
+	}
+
+	// 创建临时目录
+	//tmpDir := "./tmp/"
+	//if err := os.MkdirAll(tmpDir, 0755); err != nil {
+	//	log.Printf("创建临时目录失败: %v", err)
+	//	result.Error(c, result.ServerInteralErrStatus)
+	//	return
+	//}
+	//defer os.RemoveAll(tmpDir)
+
+	// 保存文件到临时目录的辅助函数
+	saveFile := func(file *multipart.FileHeader) error {
+		filePath := "./tmp/" + file.Filename
+		if err := c.SaveUploadedFile(file, filePath); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// 保存所有文件
+	if err := saveFile(teacherFile); err != nil {
+		log.Printf("保存教师文件失败: %v", err)
 		result.Error(c, result.ServerInteralErrStatus)
 		return
 	}
-	defer os.Remove(tempFilePath)
-	switch switchfilename(file.Filename) {
-	case "schedule":
-		resp, err := schedule.AddByExcel(file.Filename)
-		if err != nil {
-			result.Errors(c, err)
-			return
-		}
-		result.Sucess(c, resp)
-	case "class":
-		resp, err := class.ClassAddByExcel(file.Filename)
-		if err != nil {
-			result.Errors(c, err)
-			return
-		}
-		result.Sucess(c, resp)
-	case "teacher":
-		resp, err := teacher.TeacherAddByExcel(file.Filename)
-		if err != nil {
-			result.Errors(c, err)
-			return
-		}
-		result.Sucess(c, resp)
-	case "course":
-		resp, err := course.CourseAddByExcel(file.Filename)
-		if err != nil {
-			result.Errors(c, err)
-			return
-		}
-		result.Sucess(c, resp)
-	case "classroom":
-		resp, err := classroom.ClassroomAddByExcel(file.Filename)
-		if err != nil {
-			result.Errors(c, err)
-			return
-		}
-		result.Sucess(c, resp)
-	default:
-		result.Error(c, result.FileNameErrStatus)
+
+	if err := saveFile(classFile); err != nil {
+		log.Printf("保存班级文件失败: %v", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
 	}
+
+	if err := saveFile(classroomFile); err != nil {
+		log.Printf("保存教室文件失败: %v", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
+	}
+
+	if err := saveFile(courseFile); err != nil {
+		log.Printf("保存课程文件失败: %v", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
+	}
+
+	if err := saveFile(scheduleFile); err != nil {
+		log.Printf("保存课表文件失败: %v", err)
+		result.Error(c, result.ServerInteralErrStatus)
+		return
+	}
+
+	// 按照依赖顺序处理文件
+	var response dto.AddAllByExcelResp
+
+	// 处理教师信息
+	teacherResp, err := teacher.TeacherAddByExcel(teacherFile.Filename)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	response.TeacherResp = teacherResp
+
+	// 处理班级信息
+	classResp, err := class.ClassAddByExcel(classFile.Filename)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	response.ClassResp = classResp
+
+	// 处理教室信息
+	classroomResp, err := classroom.ClassroomAddByExcel(classroomFile.Filename)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	response.ClassroomResp = classroomResp
+
+	// 处理课程信息
+	courseResp, err := course.CourseAddByExcel(courseFile.Filename)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	response.CourseResp = courseResp
+
+	// 处理课表信息
+	scheduleResp, err := schedule.AddByExcel(scheduleFile.Filename)
+	if err != nil {
+		result.Errors(c, err)
+		return
+	}
+	response.ScheduleResp = scheduleResp
+
+	result.Sucess(c, response)
 }
 
 // GetClassScheduleHandler 处理查询班级课表的请求

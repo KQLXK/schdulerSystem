@@ -118,6 +118,14 @@ type ScheduleResultUpdateReq struct {
 	ClassroomID      string    `json:"classroom_id" binding:"required"`
 }
 
+type AddAllByExcelResp struct {
+	CourseResp    *CourseAddByExcelResp    `json:"course_resp"`
+	TeacherResp   *TeacherAddByExcelResp   `json:"teacher_resp"`
+	ClassroomResp *ClassroomAddByExcelResp `json:"classroom_resp"`
+	ClassResp     *ClassAddByExcelResp     `json:"class_resp"`
+	ScheduleResp  *ScheduleAddByExcelResp  `json:"schedule_resp"`
+}
+
 // 转换时间段格式
 func ConvertSlotsToModel(slots []SlotDTO) []models.TimeSlot {
 	timeslots := make([]models.TimeSlot, len(slots))

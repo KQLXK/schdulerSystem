@@ -50,11 +50,11 @@ type ClassroomSlotKey struct {
 
 type ResourceTracker struct {
 	// classroomID -> 绝对节次集合
-	classroomOccupancy map[string]map[int]bool
+	classroomOccupancy map[string]map[int]int64
 	// teacherID -> 绝对节次集合
-	teacherOccupancy map[string]map[int]bool
+	teacherOccupancy map[string]map[int]int64
 	// classID -> 绝对节次集合
-	classOccupancy map[string]map[int]bool
+	classOccupancy map[string]map[int]int64
 	mu             sync.Mutex
 }
 
@@ -125,18 +125,18 @@ func (s *Scheduler) checkClassroomConflicts(gene ScheduleGene, tracker *Resource
 		tracker.mu.Lock()
 		// 初始化教室记录
 		if tracker.classroomOccupancy[classroomID] == nil {
-			tracker.classroomOccupancy[classroomID] = make(map[int]bool)
+			tracker.classroomOccupancy[classroomID] = make(map[int]int64)
 		}
 
 		// 检查每个节次是否已占用
 		for _, p := range periods {
-			if tracker.classroomOccupancy[classroomID][p] {
+			if tracker.classroomOccupancy[classroomID][p] != 0 {
 				recorder.RecordConflict(int(gene.ScheduleID), Conflict{
 					Type:    "教室冲突",
-					Details: fmt.Sprintf("教室 %s 在第%d节已被占用", classroomID, p),
+					Details: fmt.Sprintf("教室 %s 在%s已被占用", classroomID, s.ParseAbsolutePeriods(p)),
 				})
 			} else {
-				tracker.classroomOccupancy[classroomID][p] = true
+				tracker.classroomOccupancy[classroomID][p] = gene.ScheduleID
 			}
 		}
 		tracker.mu.Unlock()
@@ -153,16 +153,16 @@ func (s *Scheduler) checkTeacherConflicts(gene ScheduleGene, tracker *ResourceTr
 		// 创建教师时间槽唯一标识
 		tracker.mu.Lock()
 		if tracker.classroomOccupancy[teacherID] == nil {
-			tracker.classroomOccupancy[teacherID] = make(map[int]bool)
+			tracker.classroomOccupancy[teacherID] = make(map[int]int64)
 		}
 		for _, p := range periods {
-			if tracker.classroomOccupancy[teacherID][p] {
+			if tracker.classroomOccupancy[teacherID][p] != 0 {
 				recorder.RecordConflict(int(gene.ScheduleID), Conflict{
 					Type:    "教师冲突",
-					Details: fmt.Sprintf("教师 %s 在第%d节已被占用", teacherID, p),
+					Details: fmt.Sprintf("教师 %s 在%s已被占用", teacherID, s.ParseAbsolutePeriods(p)),
 				})
 			} else {
-				tracker.classroomOccupancy[teacherID][p] = true
+				tracker.classroomOccupancy[teacherID][p] = gene.ScheduleID
 			}
 		}
 
@@ -183,16 +183,16 @@ func (s *Scheduler) checkClassConflicts(gene ScheduleGene, tracker *ResourceTrac
 			// 创建教师时间槽唯一标识
 			tracker.mu.Lock()
 			if tracker.classroomOccupancy[class.ID] == nil {
-				tracker.classroomOccupancy[class.ID] = make(map[int]bool)
+				tracker.classroomOccupancy[class.ID] = make(map[int]int64)
 			}
 			for _, p := range periods {
-				if tracker.classroomOccupancy[class.ID][p] {
+				if tracker.classroomOccupancy[class.ID][p] != 0 {
 					recorder.RecordConflict(int(gene.ScheduleID), Conflict{
 						Type:    "班级冲突",
-						Details: fmt.Sprintf("班级 %s 在第%d节已被占用", class.ID, p),
+						Details: fmt.Sprintf("班级 %s 在%s已被占用", class.ID, s.ParseAbsolutePeriods(p)),
 					})
 				} else {
-					tracker.classroomOccupancy[class.ID][p] = true
+					tracker.classroomOccupancy[class.ID][p] = gene.ScheduleID
 				}
 			}
 			tracker.mu.Unlock()
@@ -311,9 +311,9 @@ func (s *Scheduler) findAlternativeClassrooms(gene ScheduleGene) []string {
 
 func NewResourceTracker() *ResourceTracker {
 	return &ResourceTracker{
-		classroomOccupancy: make(map[string]map[int]bool),
-		teacherOccupancy:   make(map[string]map[int]bool),
-		classOccupancy:     make(map[string]map[int]bool),
+		classroomOccupancy: make(map[string]map[int]int64),
+		teacherOccupancy:   make(map[string]map[int]int64),
+		classOccupancy:     make(map[string]map[int]int64),
 	}
 }
 
@@ -431,4 +431,22 @@ func (s *Scheduler) GetAbsolutePeriods(ts models.TimeSlot) []int {
 	}
 
 	return periods
+}
+
+// 计算绝对节次对应星期几的第几节课
+func (s *Scheduler) ParseAbsolutePeriods(p int) string {
+	weekDayMap := map[int]string{
+		1: "一",
+		2: "二",
+		3: "三",
+		4: "四",
+		5: "五",
+	}
+	p -= 1
+	weekMax := s.Config.MaxPeriodsPerDay * 5
+	weekNumber := p/weekMax + 1
+	weekDay := p%weekMax/s.Config.MaxPeriodsPerDay + 1
+	periodNumer := p%s.Config.MaxPeriodsPerDay + 1
+
+	return fmt.Sprintf("第%d周-星期%s-第%d节课", weekNumber, weekDayMap[weekDay], periodNumer)
 }
