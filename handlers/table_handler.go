@@ -19,34 +19,67 @@ import (
 
 func AddDataByExcel(c *gin.Context) {
 	// 获取所有文件
-	courseFile, err := c.FormFile("course_file")
+	var fileList []*multipart.FileHeader
+	aFile, err := c.FormFile("afile")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
+	fileList = append(fileList, aFile)
 
-	scheduleFile, err := c.FormFile("schedule_file")
+	bFile, err := c.FormFile("bfile")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
+	fileList = append(fileList, bFile)
 
-	classroomFile, err := c.FormFile("classroom_file")
+	cFile, err := c.FormFile("cfile")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
+	fileList = append(fileList, cFile)
 
-	teacherFile, err := c.FormFile("teacher_file")
+	dFile, err := c.FormFile("dfile")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
 	}
+	fileList = append(fileList, dFile)
 
-	classFile, err := c.FormFile("class_file")
+	eFile, err := c.FormFile("efile")
 	if err != nil {
 		result.Error(c, result.FileNotReceiveStatus)
 		return
+	}
+	fileList = append(fileList, eFile)
+
+	var teacherFile *multipart.FileHeader
+	var classroomFile *multipart.FileHeader
+	var classFile *multipart.FileHeader
+	var scheduleFile *multipart.FileHeader
+	var courseFile *multipart.FileHeader
+	for _, file := range fileList {
+		switch switchfilename(file.Filename) {
+		case "teacher":
+			teacherFile = file
+			break
+		case "classroom":
+			classroomFile = file
+			break
+		case "class":
+			classFile = file
+			break
+		case "schedule":
+			scheduleFile = file
+			break
+		case "course":
+			courseFile = file
+			break
+		default:
+			result.Error(c, result.FileNameErrStatus)
+		}
 	}
 
 	// 创建临时目录
